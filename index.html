@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Financiamiento - Pagos Quincenales</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #27ae60;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .calculator {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .calculator {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .input-section {
+            padding: 20px;
+            background-color: var(--light-color);
+            border-radius: 8px;
+        }
+        
+        .result-section {
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .result-table th, .result-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .result-table th {
+            background-color: var(--light-color);
+            font-weight: 600;
+        }
+        
+        .result-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .highlight {
+            background-color: rgba(52, 152, 219, 0.1);
+            font-weight: 600;
+        }
+        
+        .summary {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--light-color);
+            border-radius: 8px;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .summary-total {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+        
+        .interest-amount {
+            color: var(--accent-color);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .payment-schedule {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        
+        .payment-schedule h3 {
+            background-color: var(--light-color);
+            padding: 10px;
+            margin: 0;
+        }
+        
+        .payment-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .payment-table th, .payment-table td {
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .payment-table th {
+            background-color: #f8f9fa;
+            position: sticky;
+            top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Calculadora de Financiamiento</h1>
+            <p class="description">Calcula tus pagos quincenales con interés del 13% quincenal</p>
+        </header>
+        
+        <div class="calculator">
+            <div class="input-section">
+                <div class="form-group">
+                    <label for="precio">Precio del Producto (RD$)</label>
+                    <input type="number" id="precio" min="0" step="0.01" value="5000">
+                </div>
+                
+                <div class="form-group">
+                    <label for="porcentajeInicial">Porcentaje de Pago Inicial (%)</label>
+                    <input type="number" id="porcentajeInicial" min="0" max="100" step="0.01" value="40">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cuotas">Número de Cuotas Quincenales</label>
+                    <select id="cuotas">
+                        <option value="4">4 quincenas (2 meses)</option>
+                        <option value="6" selected>6 quincenas (3 meses)</option>
+                        <option value="8">8 quincenas (4 meses)</option>
+                        <option value="10">10 quincenas (5 meses)</option>
+                        <option value="12">12 quincenas (6 meses)</option>
+                        <option value="18">18 quincenas (9 meses)</option>
+                        <option value="24">24 quincenas (12 meses)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tasaInteres">Tasa de Interés Quincenal (%)</label>
+                    <input type="number" id="tasaInteres" min="0" step="0.01" value="13">
+                </div>
+                
+                <div class="form-group">
+                    <label for="accesorios">Accesorios (RD$)</label>
+                    <input type="number" id="accesorios" min="0" step="0.01" value="0">
+                </div>
+                
+                <button id="calcular">Calcular Financiamiento</button>
+            </div>
+            
+            <div class="result-section">
+                <h2>Resultados del Cálculo</h2>
+                
+                <table class="result-table">
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Precio</td>
+                            <td id="result-precio">RD$5,000.00</td>
+                        </tr>
+                        <tr>
+                            <td>Pago Inicial</td>
+                            <td id="result-inicial">RD$2,000.00</td>
+                        </tr>
+                        <tr>
+                            <td>Monto a Financiar</td>
+                            <td id="result-financiar">RD$3,000.00</td>
+                        </tr>
+                        <tr>
+                            <td>Número de Cuotas Quincenales</td>
+                            <td id="result-cuotas">6</td>
+                        </tr>
+                        <tr>
+                            <td>Tasa de Interés Quincenal</td>
+                            <td id="result-tasa">13%</td>
+                        </tr>
+                        <tr class="highlight">
+                            <td>Total en Cuotas</td>
+                            <td id="result-total-cuotas">RD$4,503.00</td>
+                        </tr>
+                        <tr class="highlight">
+                            <td>Total a Pagar</td>
+                            <td id="result-total-pagar">RD$6,503.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="summary">
+                    <div class="summary-item">
+                        <span>Pago Inicial:</span>
+                        <span id="summary-inicial">RD$2,000.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Valor de cada Cuota Quincenal:</span>
+                        <span id="summary-cuota">RD$750.50</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Intereses Totales:</span>
+                        <span id="summary-intereses" class="interest-amount">RD$1,503.00</span>
+                    </div>
+                    <div class="summary-item summary-total">
+                        <span>Total a Pagar:</span>
+                        <span id="summary-total">RD$6,503.00</span>
+                    </div>
+                </div>
+                
+                <div class="payment-schedule">
+                    <h3>Cronograma de Pagos Quincenales</h3>
+                    <table class="payment-table">
+                        <thead>
+                            <tr>
+                                <th>Quincena</th>
+                                <th>Cuota (RD$)</th>
+                                <th>Interés (RD$)</th>
+                                <th>Capital (RD$)</th>
+                                <th>Saldo (RD$)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payment-body">
+                            <!-- Aquí se generará el cronograma de pagos -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Calculadora de Financiamiento &copy; 2023 - Todos los derechos reservados</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos del DOM
+            const precioInput = document.getElementById('precio');
+            const porcentajeInicialInput = document.getElementById('porcentajeInicial');
+            const cuotasSelect = document.getElementById('cuotas');
+            const tasaInteresInput = document.getElementById('tasaInteres');
+            const accesoriosInput = document.getElementById('accesorios');
+            const calcularBtn = document.getElementById('calcular');
+            
+            // Elementos de resultados
+            const resultPrecio = document.getElementById('result-precio');
+            const resultInicial = document.getElementById('result-inicial');
+            const resultFinanciar = document.getElementById('result-financiar');
+            const resultCuotas = document.getElementById('result-cuotas');
+            const resultTasa = document.getElementById('result-tasa');
+            const resultTotalCuotas = document.getElementById('result-total-cuotas');
+            const resultTotalPagar = document.getElementById('result-total-pagar');
+            
+            // Elementos del resumen
+            const summaryInicial = document.getElementById('summary-inicial');
+            const summaryCuota = document.getElementById('summary-cuota');
+            const summaryIntereses = document.getElementById('summary-intereses');
+            const summaryTotal = document.getElementById('summary-total');
+            
+            // Elemento para el cronograma de pagos
+            const paymentBody = document.getElementById('payment-body');
+            
+            // Función para formatear números como moneda
+            function formatoMoneda(valor) {
+                return new Intl.NumberFormat('es-DO', {
+                    style: 'currency',
+                    currency: 'DOP',
+                    minimumFractionDigits: 2
+                }).format(valor);
+            }
+            
+            // Función para calcular el financiamiento
+            function calcularFinanciamiento() {
+                // Obtener valores de los inputs
+                const precio = parseFloat(precioInput.value) || 0;
+                const porcentajeInicial = parseFloat(porcentajeInicialInput.value) || 0;
+                const cuotas = parseInt(cuotasSelect.value) || 1;
+                const tasaInteresQuincenal = parseFloat(tasaInteresInput.value) || 0;
+                const accesorios = parseFloat(accesoriosInput.value) || 0;
+                
+                // Calcular pago inicial
+                const pagoInicial = (precio * porcentajeInicial / 100);
+                
+                // Calcular monto a financiar
+                const montoFinanciar = precio - pagoInicial + accesorios;
+                
+                // Convertir tasa porcentual a decimal
+                const tasaInteresDecimal = tasaInteresQuincenal / 100;
+                
+                // Calcular cuota quincenal usando la fórmula de amortización
+                let cuotaQuincenal = 0;
+                if (tasaInteresDecimal > 0) {
+                    cuotaQuincenal = montoFinanciar * (tasaInteresDecimal * Math.pow(1 + tasaInteresDecimal, cuotas)) / 
+                                  (Math.pow(1 + tasaInteresDecimal, cuotas) - 1);
+                } else {
+                    cuotaQuincenal = montoFinanciar / cuotas;
+                }
+                
+                // Calcular total en cuotas
+                const totalCuotas = cuotaQuincenal * cuotas;
+                
+                // Calcular total a pagar
+                const totalPagar = pagoInicial + totalCuotas;
+                
+                // Calcular intereses totales
+                const interesesTotales = totalCuotas - montoFinanciar;
+                
+                // Actualizar la interfaz con los resultados
+                resultPrecio.textContent = formatoMoneda(precio);
+                resultInicial.textContent = formatoMoneda(pagoInicial);
+                resultFinanciar.textContent = formatoMoneda(montoFinanciar);
+                resultCuotas.textContent = cuotas;
+                resultTasa.textContent = `${tasaInteresQuincenal}%`;
+                resultTotalCuotas.textContent = formatoMoneda(totalCuotas);
+                resultTotalPagar.textContent = formatoMoneda(totalPagar);
+                
+                summaryInicial.textContent = formatoMoneda(pagoInicial);
+                summaryCuota.textContent = formatoMoneda(cuotaQuincenal);
+                summaryIntereses.textContent = formatoMoneda(interesesTotales);
+                summaryTotal.textContent = formatoMoneda(totalPagar);
+                
+                // Generar cronograma de pagos
+                generarCronogramaPagos(montoFinanciar, cuotaQuincenal, tasaInteresDecimal, cuotas);
+            }
+            
+            // Función para generar el cronograma de pagos
+            function generarCronogramaPagos(montoFinanciar, cuotaQuincenal, tasaInteresDecimal, cuotas) {
+                let saldo = montoFinanciar;
+                let html = '';
+                
+                for (let i = 1; i <= cuotas; i++) {
+                    const interes = saldo * tasaInteresDecimal;
+                    const capital = cuotaQuincenal - interes;
+                    saldo -= capital;
+                    
+                    // Si es la última cuota, ajustar para evitar decimales residuales
+                    if (i === cuotas) {
+                        const ajuste = Math.abs(saldo);
+                        if (ajuste > 0.01) {
+                            saldo = 0;
+                        }
+                    }
+                    
+                    html += `
+                        <tr>
+                            <td>${i}</td>
+                            <td>${formatoMoneda(cuotaQuincenal)}</td>
+                            <td>${formatoMoneda(interes)}</td>
+                            <td>${formatoMoneda(capital)}</td>
+                            <td>${formatoMoneda(Math.max(saldo, 0))}</td>
+                        </tr>
+                    `;
+                }
+                
+                paymentBody.innerHTML = html;
+            }
+            
+            // Event listeners
+            calcularBtn.addEventListener('click', calcularFinanciamiento);
+            
+            // Calcular automáticamente al cargar la página
+            calcularFinanciamiento();
+            
+            // Calcular automáticamente cuando cambien los valores
+            precioInput.addEventListener('input', calcularFinanciamiento);
+            porcentajeInicialInput.addEventListener('input', calcularFinanciamiento);
+            cuotasSelect.addEventListener('change', calcularFinanciamiento);
+            tasaInteresInput.addEventListener('input', calcularFinanciamiento);
+            accesoriosInput.addEventListener('input', calcularFinanciamiento);
+        });
+    </script>
+</body>
+</html>
