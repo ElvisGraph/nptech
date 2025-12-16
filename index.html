@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Financiamiento - Pagos Quincenales</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    
     <style>
         :root {
             --primary-color: #3498db;
@@ -14,328 +21,437 @@
             --success-color: #27ae60;
         }
         
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        body {
+            background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
-        body {
-            background-color: #f5f7fa;
-            color: var(--dark-color);
-            line-height: 1.6;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-        
-        header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-        
-        .description {
-            font-size: 1rem;
-            opacity: 0.9;
-        }
-        
-        .calculator {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            padding: 20px;
-        }
-        
-        @media (max-width: 768px) {
-            .calculator {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .input-section {
-            padding: 20px;
-            background-color: var(--light-color);
-            border-radius: 8px;
-        }
-        
-        .result-section {
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-        
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-        
-        button {
-            background-color: var(--primary-color);
-            color: white;
+        .card {
             border: none;
-            padding: 12px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .calculator-container {
+            max-width: 1400px;
+        }
+        
+        .input-section .card {
+            background-color: #fff;
+        }
+        
+        .result-section .card {
+            background-color: #fff;
+        }
+        
+        .form-label {
             font-weight: 600;
-            transition: background-color 0.3s;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control, .form-select {
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+        
+        .btn-calculate {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
             width: 100%;
         }
         
-        button:hover {
+        .btn-calculate:hover {
             background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            transform: translateY(-2px);
         }
         
         .result-table {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        
-        .result-table th, .result-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-collapse: separate;
+            border-spacing: 0;
         }
         
         .result-table th {
-            background-color: var(--light-color);
+            background-color: var(--primary-color);
+            color: white;
             font-weight: 600;
+            padding: 1rem;
+            border: none;
         }
         
-        .result-table tr:last-child td {
-            border-bottom: none;
+        .result-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
         }
         
-        .highlight {
+        .result-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .result-table tr.highlight {
             background-color: rgba(52, 152, 219, 0.1);
             font-weight: 600;
-        }
-        
-        .summary {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: var(--light-color);
-            border-radius: 8px;
         }
         
         .summary-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            padding: 0.75rem 0;
+            border-bottom: 1px dashed #dee2e6;
         }
         
         .summary-total {
             font-weight: 700;
             font-size: 1.2rem;
-            color: var(--primary-color);
-            border-top: 1px solid #ddd;
-            padding-top: 10px;
+            color: var(--dark-color);
+            border-bottom: none;
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--primary-color);
         }
         
         .interest-amount {
             color: var(--accent-color);
-        }
-        
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #7f8c8d;
-            font-size: 0.9rem;
-        }
-        
-        .payment-schedule {
-            margin-top: 20px;
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-        
-        .payment-schedule h3 {
-            background-color: var(--light-color);
-            padding: 10px;
-            margin: 0;
+            font-weight: 600;
         }
         
         .payment-table {
             width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .payment-table th, .payment-table td {
-            padding: 8px 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+            font-size: 0.9rem;
         }
         
         .payment-table th {
             background-color: #f8f9fa;
-            position: sticky;
-            top: 0;
+            font-weight: 600;
+            color: var(--dark-color);
+            padding: 0.75rem;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .payment-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .payment-table tbody tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .header-icon {
+            color: var(--primary-color);
+            margin-right: 10px;
+        }
+        
+        .card-title {
+            color: var(--dark-color);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 1.5rem 0;
+            margin-top: 3rem;
+            text-align: center;
+        }
+        
+        @media (max-width: 992px) {
+            .calculator-container {
+                padding: 0 15px;
+            }
+            
+            .result-section {
+                margin-top: 2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .table-container {
+                max-height: 300px;
+            }
+            
+            .payment-table {
+                font-size: 0.8rem;
+            }
+            
+            .payment-table th, 
+            .payment-table td {
+                padding: 0.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Calculadora de Financiamiento</h1>
-          
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: var(--primary-color);">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="bi bi-calculator-fill me-2"></i>Calculadora de Financiamiento
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#"><i class="bi bi-house-door me-1"></i> Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="bi bi-info-circle me-1"></i> Información</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="bi bi-question-circle me-1"></i> Ayuda</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container calculator-container py-4">
+        <!-- Header -->
+        <header class="text-center mb-5">
+            <h1 class="display-5 fw-bold text-dark mb-3">
+                <i class="bi bi-cash-coin header-icon"></i>Calculadora de Financiamiento
+            </h1>
+            <p class="lead text-muted">Calcule sus pagos quincenales con facilidad y precisión</p>
+            <div class="row justify-content-center mt-4">
+                <div class="col-md-8">
+                    <div class="alert alert-info" role="alert">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Esta calculadora le permite estimar sus pagos quincenales en base al precio del producto, pago inicial, número de cuotas y tasa de interés.
+                    </div>
+                </div>
+            </div>
         </header>
         
-        <div class="calculator">
-            <div class="input-section">
-                <div class="form-group">
-                    <label for="precio">Precio del Producto (RD$)</label>
-                    <input type="number" id="precio" min="0" step="0.01" value="5000">
+        <!-- Calculator Section -->
+        <div class="row g-4">
+            <!-- Input Section -->
+            <div class="col-lg-5">
+                <div class="card h-100">
+                    <div class="card-body p-4">
+                        <h3 class="card-title">
+                            <i class="bi bi-sliders2 header-icon"></i>Parámetros de Financiamiento
+                        </h3>
+                        
+                        <div class="mb-4">
+                            <label for="precio" class="form-label">Precio del Producto (RD$)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">RD$</span>
+                                <input type="number" class="form-control" id="precio" min="0" step="0.01" value="5000">
+                            </div>
+                            <div class="form-text">Ingrese el precio total del producto a financiar</div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="porcentajeInicial" class="form-label">Porcentaje de Pago Inicial (%)</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="porcentajeInicial" min="0" max="100" step="0.01" value="40">
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <div class="form-text">Porcentaje del precio que pagará al inicio</div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="cuotas" class="form-label">Número de Cuotas Quincenales</label>
+                            <select class="form-select" id="cuotas">
+                                <option value="4">4 quincenas (2 meses)</option>
+                                <option value="6" selected>6 quincenas (3 meses)</option>
+                                <option value="8">8 quincenas (4 meses)</option>
+                                <option value="10">10 quincenas (5 meses)</option>
+                                <option value="12">12 quincenas (6 meses)</option>
+                                <option value="18">18 quincenas (9 meses)</option>
+                                <option value="24">24 quincenas (12 meses)</option>
+                            </select>
+                            <div class="form-text">Seleccione el plazo de financiamiento en quincenas</div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="tasaInteres" class="form-label">Tasa de Interés Quincenal (%)</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="tasaInteres" min="0" step="0.01" value="15">
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <div class="form-text">Tasa de interés aplicada cada quincena</div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="accesorios" class="form-label">Accesorios o Gastos Adicionales (RD$)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">RD$</span>
+                                <input type="number" class="form-control" id="accesorios" min="0" step="0.01" value="0">
+                            </div>
+                            <div class="form-text">Costo de accesorios, seguros o gastos adicionales</div>
+                        </div>
+                        
+                        <button id="calcular" class="btn btn-calculate mt-2">
+                            <i class="bi bi-calculator me-2"></i>Calcular Financiamiento
+                        </button>
+                        
+                        <div class="mt-4 pt-3 border-top">
+                            <h5 class="fw-bold mb-3">Información Importante</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Cálculos basados en pagos quincenales</li>
+                                <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Tasa de interés aplicada cada 15 días</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Cronograma de pagos detallado</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="form-group">
-                    <label for="porcentajeInicial">Porcentaje de Pago Inicial (%)</label>
-                    <input type="number" id="porcentajeInicial" min="0" max="100" step="0.01" value="40">
-                </div>
-                
-                <div class="form-group">
-                    <label for="cuotas">Número de Cuotas Quincenales</label>
-                    <select id="cuotas">
-                        <option value="4">4 quincenas (2 meses)</option>
-                        <option value="6" selected>6 quincenas (3 meses)</option>
-                        <option value="8">8 quincenas (4 meses)</option>
-                        <option value="10">10 quincenas (5 meses)</option>
-                        <option value="12">12 quincenas (6 meses)</option>
-                        <option value="18">18 quincenas (9 meses)</option>
-                        <option value="24">24 quincenas (12 meses)</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="tasaInteres">Tasa de Interés Quincenal (%)</label>
-                    <input type="number" id="tasaInteres" min="0" step="0.01" value="15">
-                </div>
-                
-                <div class="form-group">
-                    <label for="accesorios">Accesorios (RD$)</label>
-                    <input type="number" id="accesorios" min="0" step="0.01" value="0">
-                </div>
-                
-                <button id="calcular">Calcular Financiamiento</button>
             </div>
             
-            <div class="result-section">
-                <h2>Resultados del Cálculo</h2>
-                
-                <table class="result-table">
-                    <thead>
-                        <tr>
-                            <th>Concepto</th>
-                            <th>Valor</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Precio</td>
-                            <td id="result-precio">RD$5,000.00</td>
-                        </tr>
-                        <tr>
-                            <td>Pago Inicial</td>
-                            <td id="result-inicial">RD$2,000.00</td>
-                        </tr>
-                        <tr>
-                            <td>Monto a Financiar</td>
-                            <td id="result-financiar">RD$3,000.00</td>
-                        </tr>
-                        <tr>
-                            <td>Número de Cuotas Quincenales</td>
-                            <td id="result-cuotas">6</td>
-                        </tr>
-                        <tr>
-                            <td>Tasa de Interés Quincenal</td>
-                            <td id="result-tasa">13%</td>
-                        </tr>
-                        <tr class="highlight">
-                            <td>Total en Cuotas</td>
-                            <td id="result-total-cuotas">RD$4,503.00</td>
-                        </tr>
-                        <tr class="highlight">
-                            <td>Total a Pagar</td>
-                            <td id="result-total-pagar">RD$6,503.00</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <div class="summary">
-                    <div class="summary-item">
-                        <span>Pago Inicial:</span>
-                        <span id="summary-inicial">RD$2,000.00</span>
+            <!-- Results Section -->
+            <div class="col-lg-7">
+                <div class="card h-100">
+                    <div class="card-body p-4">
+                        <h3 class="card-title">
+                            <i class="bi bi-clipboard-data header-icon"></i>Resultados del Cálculo
+                        </h3>
+                        
+                        <!-- Results Table -->
+                        <div class="table-responsive mb-4">
+                            <table class="result-table table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Concepto</th>
+                                        <th scope="col" class="text-end">Valor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Precio del Producto</td>
+                                        <td class="text-end" id="result-precio">RD$5,000.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pago Inicial</td>
+                                        <td class="text-end" id="result-inicial">RD$2,000.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Accesorios/Gastos Adicionales</td>
+                                        <td class="text-end" id="result-accesorios">RD$0.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Monto a Financiar</td>
+                                        <td class="text-end" id="result-financiar">RD$3,000.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Número de Cuotas Quincenales</td>
+                                        <td class="text-end" id="result-cuotas">6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tasa de Interés Quincenal</td>
+                                        <td class="text-end" id="result-tasa">15%</td>
+                                    </tr>
+                                    <tr class="highlight">
+                                        <td><strong>Total en Cuotas</strong></td>
+                                        <td class="text-end" id="result-total-cuotas">RD$4,503.00</td>
+                                    </tr>
+                                    <tr class="highlight">
+                                        <td><strong>Total a Pagar</strong></td>
+                                        <td class="text-end" id="result-total-pagar">RD$6,503.00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Summary Section -->
+                        <div class="card bg-light mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">Resumen del Financiamiento</h5>
+                                <div class="summary-item">
+                                    <span>Pago Inicial:</span>
+                                    <span id="summary-inicial">RD$2,000.00</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Valor de cada Cuota Quincenal:</span>
+                                    <span id="summary-cuota">RD$750.50</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Intereses Totales:</span>
+                                    <span id="summary-intereses" class="interest-amount">RD$1,503.00</span>
+                                </div>
+                                <div class="summary-item summary-total">
+                                    <span>Total a Pagar:</span>
+                                    <span id="summary-total">RD$6,503.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Payment Schedule -->
+                        <div class="mt-4">
+                            <h5 class="card-title mb-3">
+                                <i class="bi bi-calendar-week header-icon"></i>Cronograma de Pagos Quincenales
+                            </h5>
+                            <div class="table-container">
+                                <table class="payment-table table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Quincena</th>
+                                            <th scope="col" class="text-end">Cuota (RD$)</th>
+                                            <th scope="col" class="text-end">Interés (RD$)</th>
+                                            <th scope="col" class="text-end">Capital (RD$)</th>
+                                            <th scope="col" class="text-end">Saldo (RD$)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="payment-body">
+                                        <!-- Aquí se generará el cronograma de pagos -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    <div class="summary-item">
-                        <span>Valor de cada Cuota Quincenal:</span>
-                        <span id="summary-cuota">RD$750.50</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>Intereses Totales:</span>
-                        <span id="summary-intereses" class="interest-amount">RD$1,503.00</span>
-                    </div>
-                    <div class="summary-item summary-total">
-                        <span>Total a Pagar:</span>
-                        <span id="summary-total">RD$6,503.00</span>
-                    </div>
-                </div>
-                
-                <div class="payment-schedule">
-                    <h3>Cronograma de Pagos Quincenales</h3>
-                    <table class="payment-table">
-                        <thead>
-                            <tr>
-                                <th>Quincena</th>
-                                <th>Cuota (RD$)</th>
-                                <th>Interés (RD$)</th>
-                                <th>Capital (RD$)</th>
-                                <th>Saldo (RD$)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="payment-body">
-                            <!-- Aquí se generará el cronograma de pagos -->
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
-        
-        <footer>
-            <p>Calculadora de Financiamiento &copy; 2023 - Todos los derechos reservados</p>
-        </footer>
     </div>
-
+    
+    <!-- Footer -->
+    <footer class="mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="fw-bold">Calculadora de Financiamiento</h5>
+                    <p class="mb-0">Herramienta para calcular pagos quincenales con facilidad y precisión.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">&copy; 2023 - Todos los derechos reservados</p>
+                    <p class="mb-0">Desarrollado con Bootstrap 5</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Elementos del DOM
@@ -349,6 +465,7 @@
             // Elementos de resultados
             const resultPrecio = document.getElementById('result-precio');
             const resultInicial = document.getElementById('result-inicial');
+            const resultAccesorios = document.getElementById('result-accesorios');
             const resultFinanciar = document.getElementById('result-financiar');
             const resultCuotas = document.getElementById('result-cuotas');
             const resultTasa = document.getElementById('result-tasa');
@@ -412,6 +529,7 @@
                 // Actualizar la interfaz con los resultados
                 resultPrecio.textContent = formatoMoneda(precio);
                 resultInicial.textContent = formatoMoneda(pagoInicial);
+                resultAccesorios.textContent = formatoMoneda(accesorios);
                 resultFinanciar.textContent = formatoMoneda(montoFinanciar);
                 resultCuotas.textContent = cuotas;
                 resultTasa.textContent = `${tasaInteresQuincenal}%`;
@@ -448,10 +566,10 @@
                     html += `
                         <tr>
                             <td>${i}</td>
-                            <td>${formatoMoneda(cuotaQuincenal)}</td>
-                            <td>${formatoMoneda(interes)}</td>
-                            <td>${formatoMoneda(capital)}</td>
-                            <td>${formatoMoneda(Math.max(saldo, 0))}</td>
+                            <td class="text-end">${formatoMoneda(cuotaQuincenal)}</td>
+                            <td class="text-end">${formatoMoneda(interes)}</td>
+                            <td class="text-end">${formatoMoneda(capital)}</td>
+                            <td class="text-end">${formatoMoneda(Math.max(saldo, 0))}</td>
                         </tr>
                     `;
                 }
@@ -474,6 +592,4 @@
         });
     </script>
 </body>
-
 </html>
-
