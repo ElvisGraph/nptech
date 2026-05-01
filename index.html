@@ -251,6 +251,43 @@
             margin-top: 5px;
         }
         
+        /* Estilos para el selector de inicial */
+        .inicial-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 0.5rem;
+        }
+        
+        .inicial-tab {
+            flex: 1;
+            text-align: center;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+            color: var(--dark-color);
+        }
+        
+        .inicial-tab.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .inicial-tab:hover:not(.active) {
+            background-color: #e9ecef;
+        }
+        
+        .inicial-field {
+            transition: all 0.3s ease;
+        }
+        
+        .inicial-field.hidden {
+            display: none;
+        }
+        
         .copy-section {
             background-color: #f8f9fa;
             border-radius: 8px;
@@ -350,7 +387,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: var(--primary-color);">
         <div class="container">
             <a class="navbar-brand fw-bold" href="#">
-                <i class="bi bi-calculator-fill me-2"></i>NPTECH
+                <i class="bi bi-calculator-fill me-2"></i>NPTECH - Financiamiento
             </a>
         </div>
     </nav>
@@ -397,13 +434,37 @@
                             <div class="form-text">Ingrese el precio total del producto a financiar</div>
                         </div>
                         
-                        <div class="mb-4">
+                        <!-- Selector de tipo de inicial -->
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de Pago Inicial</label>
+                            <div class="inicial-tabs" id="inicial-tabs">
+                                <div class="inicial-tab active" data-tipo="porcentaje">
+                                    <i class="bi bi-percent"></i> Porcentaje
+                                </div>
+                                <div class="inicial-tab" data-tipo="monto">
+                                    <i class="bi bi-cash-stack"></i> Monto Fijo
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Campo de Porcentaje de Pago Inicial -->
+                        <div class="mb-4 inicial-field" id="porcentaje-field">
                             <label for="porcentajeInicial" class="form-label">Porcentaje de Pago Inicial (%)</label>
                             <div class="input-group">
                                 <input type="number" class="form-control" id="porcentajeInicial" min="0" max="100" step="0.01" value="40">
                                 <span class="input-group-text">%</span>
                             </div>
                             <div class="form-text">Porcentaje del precio que pagará al inicio</div>
+                        </div>
+                        
+                        <!-- Campo de Monto Fijo de Pago Inicial -->
+                        <div class="mb-4 inicial-field hidden" id="monto-field">
+                            <label for="montoInicial" class="form-label">Monto de Pago Inicial (RD$)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">RD$</span>
+                                <input type="number" class="form-control" id="montoInicial" min="0" step="0.01" value="2000">
+                            </div>
+                            <div class="form-text">Monto fijo que pagará al inicio</div>
                         </div>
                         
                         <div class="mb-4">
@@ -462,9 +523,17 @@
                                         <td>Precio del Producto</td>
                                         <td class="text-end" id="result-precio">RD$5,000.00</td>
                                     </tr>
-                                    <tr>
+                                    <tr id="inicial-row">
                                         <td>Pago Inicial</td>
                                         <td class="text-end" id="result-inicial">RD$2,000.00</td>
+                                    </tr>
+                                    <tr id="inicial-porcentaje-row" style="display: none;">
+                                        <td>(% del Precio)</td>
+                                        <td class="text-end" id="result-inicial-porcentaje">40%</td>
+                                    </tr>
+                                    <tr id="inicial-monto-row" style="display: none;">
+                                        <td>(Monto Fijo)</td>
+                                        <td class="text-end" id="result-inicial-monto">RD$2,000.00</td>
                                     </tr>
                                     <tr>
                                         <td>Accesorios/Gastos Adicionales</td>
@@ -491,7 +560,7 @@
                                         <td class="text-end" id="result-total-pagar">RD$6,503.00</td>
                                     </tr>
                                 </tbody>
-                            </table>
+                             </table>
                         </div>
                         
                         <!-- Summary Section -->
@@ -559,7 +628,7 @@ Total a Pagar: RD$6,503.00</textarea>
                                     <tbody id="payment-body">
                                         <!-- Aquí se generará el cronograma de pagos -->
                                     </tbody>
-                                </table>
+                                 </table>
                             </div>
                         </div>
                     </div>
@@ -577,7 +646,9 @@ Total a Pagar: RD$6,503.00</textarea>
     <footer class="mt-5">
         <div class="container">
             <div class="row">
- 
+                <div class="col-12">
+                    <p class="mb-0">© 2024 NPTECH - Calculadora de Financiamiento. Todos los derechos reservados.</p>
+                </div>
             </div>
         </div>
     </footer>
@@ -590,6 +661,7 @@ Total a Pagar: RD$6,503.00</textarea>
             // Elementos del DOM
             const precioInput = document.getElementById('precio');
             const porcentajeInicialInput = document.getElementById('porcentajeInicial');
+            const montoInicialInput = document.getElementById('montoInicial');
             const cuotasSelect = document.getElementById('cuotas');
             const tasaInteresInput = document.getElementById('tasaInteres');
             const accesoriosInput = document.getElementById('accesorios');
@@ -600,6 +672,15 @@ Total a Pagar: RD$6,503.00</textarea>
             const radioMensual = document.getElementById('mensual');
             const optionQuincenal = document.getElementById('option-quincenal');
             const optionMensual = document.getElementById('option-mensual');
+            
+            // Nuevos elementos para el selector de inicial
+            const inicialTabs = document.querySelectorAll('.inicial-tab');
+            const porcentajeField = document.getElementById('porcentaje-field');
+            const montoField = document.getElementById('monto-field');
+            const inicialPorcentajeRow = document.getElementById('inicial-porcentaje-row');
+            const inicialMontoRow = document.getElementById('inicial-monto-row');
+            const resultInicialPorcentaje = document.getElementById('result-inicial-porcentaje');
+            const resultInicialMonto = document.getElementById('result-inicial-monto');
             
             // Elementos de etiquetas dinámicas
             const cuotasLabel = document.getElementById('cuotas-label');
@@ -640,8 +721,9 @@ Total a Pagar: RD$6,503.00</textarea>
             // Elemento para el cronograma de pagos
             const paymentBody = document.getElementById('payment-body');
             
-            // Estado actual del período
+            // Estado actual del período y tipo de inicial
             let periodoActual = 'quincenal';
+            let tipoInicial = 'porcentaje'; // 'porcentaje' o 'monto'
             
             // Variable para el timeout del toast
             let toastTimeout;
@@ -684,10 +766,15 @@ Total a Pagar: RD$6,503.00</textarea>
                 cuotasSelect.innerHTML = '';
                 
                 if (esQuincenal) {
-                    // Opciones quincenales
+                    // Opciones quincenales - AHORA CON MÁS OPCIONES
                     const opciones = [
+                        { value: 1, texto: '1 quincena (15 días)' },
+                        { value: 2, texto: '2 quincenas (1 mes)' },
+                        { value: 3, texto: '3 quincenas (1.5 meses)' },
                         { value: 4, texto: '4 quincenas (2 meses)' },
+                        { value: 5, texto: '5 quincenas (2.5 meses)' },
                         { value: 6, texto: '6 quincenas (3 meses)' },
+                        { value: 7, texto: '7 quincenas (3.5 meses)' },
                         { value: 8, texto: '8 quincenas (4 meses)' },
                         { value: 10, texto: '10 quincenas (5 meses)' },
                         { value: 12, texto: '12 quincenas (6 meses)' },
@@ -703,14 +790,19 @@ Total a Pagar: RD$6,503.00</textarea>
                         cuotasSelect.appendChild(option);
                     });
                 } else {
-                    // Opciones mensuales
+                    // Opciones mensuales - TAMBIÉN AMPLIADAS
                     const opciones = [
+                        { value: 1, texto: '1 mes' },
                         { value: 2, texto: '2 meses' },
                         { value: 3, texto: '3 meses' },
                         { value: 4, texto: '4 meses' },
                         { value: 5, texto: '5 meses' },
                         { value: 6, texto: '6 meses' },
+                        { value: 7, texto: '7 meses' },
+                        { value: 8, texto: '8 meses' },
                         { value: 9, texto: '9 meses' },
+                        { value: 10, texto: '10 meses' },
+                        { value: 11, texto: '11 meses' },
                         { value: 12, texto: '12 meses' }
                     ];
                     
@@ -729,7 +821,6 @@ Total a Pagar: RD$6,503.00</textarea>
                 const esQuincenal = periodoActual === 'quincenal';
                 const periodoTexto = esQuincenal ? 'Quincenal' : 'Mensual';
                 const periodoTextoLower = esQuincenal ? 'quincenal' : 'mensual';
-                const periodoPlural = esQuincenal ? 'quincenas' : 'meses';
                 const periodoSingular = esQuincenal ? 'quincena' : 'mes';
                 
                 // Actualizar clases activas
@@ -765,9 +856,11 @@ Total a Pagar: RD$6,503.00</textarea>
                 const esQuincenal = periodoActual === 'quincenal';
                 
                 if (esQuincenal) {
+                    if (cuotas === 1) return `Valor de la Cuota (1 Quincena):`;
                     return `Valor de cada Cuota (${cuotas} Quincenas):`;
                 } else {
-                    return `Valor de cada Cuota (${cuotas} ${cuotas === 1 ? 'Mes' : 'Meses'}):`;
+                    if (cuotas === 1) return `Valor de la Cuota (1 Mes):`;
+                    return `Valor de cada Cuota (${cuotas} Meses):`;
                 }
             }
             
@@ -781,12 +874,17 @@ Total a Pagar: RD$6,503.00</textarea>
                 const precio = resultPrecio.textContent;
                 const intereses = summaryIntereses.textContent;
                 const periodoTexto = esQuincenal ? 'Quincenal' : 'Mensual';
-                const periodoUnidad = esQuincenal ? 'Quincenas' : 'Meses';
+                const periodoSingular = esQuincenal ? 'quincena' : 'mes';
                 
                 let resumen = `📊 *RESUMEN DE FINANCIAMIENTO*\n`;
                 resumen += `💰 *Precio del Producto:* ${precio}\n`;
                 resumen += `💵 *Pago Inicial:* ${pagoInicial}\n`;
-                resumen += `📅 *${cuotas} Cuotas ${periodoTexto}s* de: ${valorCuota} c/u\n`;
+                
+                if (cuotas === '1') {
+                    resumen += `📅 *${cuotas} Cuota ${periodoTexto}* de: ${valorCuota}\n`;
+                } else {
+                    resumen += `📅 *${cuotas} Cuotas ${periodoTexto}s* de: ${valorCuota} c/u\n`;
+                }
                 
                 if (detallado) {
                     resumen += `📈 *Intereses Totales:* ${intereses}\n`;
@@ -814,31 +912,44 @@ Total a Pagar: RD$6,503.00</textarea>
                 return resumen;
             }
             
+            // Función para obtener el monto del pago inicial según el tipo seleccionado
+            function obtenerPagoInicial(precio) {
+                if (tipoInicial === 'porcentaje') {
+                    const porcentaje = parseFloat(porcentajeInicialInput.value) || 0;
+                    const porcentajeValue = Math.min(100, Math.max(0, porcentaje));
+                    return (precio * porcentajeValue / 100);
+                } else {
+                    return parseFloat(montoInicialInput.value) || 0;
+                }
+            }
+            
             // Función para calcular el financiamiento
             function calcularFinanciamiento() {
                 // Obtener valores de los inputs
                 const precio = parseFloat(precioInput.value) || 0;
-                const porcentajeInicial = parseFloat(porcentajeInicialInput.value) || 0;
                 let cuotas = parseInt(cuotasSelect.value) || 1;
                 const tasaInteres = parseFloat(tasaInteresInput.value) || 0;
                 const accesorios = parseFloat(accesoriosInput.value) || 0;
                 
-                // Calcular pago inicial
-                const pagoInicial = (precio * porcentajeInicial / 100);
+                // Calcular pago inicial según el tipo seleccionado
+                const pagoInicial = obtenerPagoInicial(precio);
                 
                 // Calcular monto a financiar
                 const montoFinanciar = precio - pagoInicial + accesorios;
+                
+                // Validar que el monto a financiar no sea negativo
+                const montoFinanciarValido = Math.max(0, montoFinanciar);
                 
                 // Convertir tasa porcentual a decimal
                 const tasaInteresDecimal = tasaInteres / 100;
                 
                 // Calcular cuota usando la fórmula de amortización
                 let cuota = 0;
-                if (tasaInteresDecimal > 0) {
-                    cuota = montoFinanciar * (tasaInteresDecimal * Math.pow(1 + tasaInteresDecimal, cuotas)) / 
+                if (tasaInteresDecimal > 0 && montoFinanciarValido > 0 && cuotas > 0) {
+                    cuota = montoFinanciarValido * (tasaInteresDecimal * Math.pow(1 + tasaInteresDecimal, cuotas)) / 
                                   (Math.pow(1 + tasaInteresDecimal, cuotas) - 1);
-                } else {
-                    cuota = montoFinanciar / cuotas;
+                } else if (montoFinanciarValido > 0 && cuotas > 0) {
+                    cuota = montoFinanciarValido / cuotas;
                 }
                 
                 // Calcular total en cuotas
@@ -848,7 +959,7 @@ Total a Pagar: RD$6,503.00</textarea>
                 const totalPagar = pagoInicial + totalCuotas;
                 
                 // Calcular intereses totales
-                const interesesTotales = totalCuotas - montoFinanciar;
+                const interesesTotales = totalCuotas - montoFinanciarValido;
                 
                 // Actualizar la etiqueta de cuota con el número de cuotas seleccionado
                 cuotaLabel.textContent = obtenerTextoCuota(cuotas);
@@ -856,8 +967,22 @@ Total a Pagar: RD$6,503.00</textarea>
                 // Actualizar la interfaz con los resultados
                 resultPrecio.textContent = formatoMoneda(precio);
                 resultInicial.textContent = formatoMoneda(pagoInicial);
+                
+                // Mostrar información adicional del pago inicial según el tipo
+                if (tipoInicial === 'porcentaje') {
+                    const porcentaje = parseFloat(porcentajeInicialInput.value) || 0;
+                    resultInicialPorcentaje.textContent = `${Math.min(100, Math.max(0, porcentaje))}%`;
+                    inicialPorcentajeRow.style.display = 'table-row';
+                    inicialMontoRow.style.display = 'none';
+                } else {
+                    const monto = parseFloat(montoInicialInput.value) || 0;
+                    resultInicialMonto.textContent = formatoMoneda(monto);
+                    inicialMontoRow.style.display = 'table-row';
+                    inicialPorcentajeRow.style.display = 'none';
+                }
+                
                 resultAccesorios.textContent = formatoMoneda(accesorios);
-                resultFinanciar.textContent = formatoMoneda(montoFinanciar);
+                resultFinanciar.textContent = formatoMoneda(montoFinanciarValido);
                 resultCuotas.textContent = cuotas;
                 resultTasa.textContent = `${tasaInteres}%`;
                 resultTotalCuotas.textContent = formatoMoneda(totalCuotas);
@@ -872,7 +997,7 @@ Total a Pagar: RD$6,503.00</textarea>
                 resumenCliente.value = generarResumenCliente(false);
                 
                 // Generar cronograma de pagos
-                generarCronogramaPagos(montoFinanciar, cuota, tasaInteresDecimal, cuotas);
+                generarCronogramaPagos(montoFinanciarValido, cuota, tasaInteresDecimal, cuotas);
             }
             
             // Función para generar el cronograma de pagos
@@ -886,25 +1011,56 @@ Total a Pagar: RD$6,503.00</textarea>
                     saldo -= capital;
                     
                     // Si es la última cuota, ajustar para evitar decimales residuales
-                    if (i === cuotas) {
-                        const ajuste = Math.abs(saldo);
-                        if (ajuste > 0.01) {
-                            saldo = 0;
-                        }
+                    if (i === cuotas && Math.abs(saldo) > 0.01) {
+                        const ajusteCapital = capital + saldo;
+                        const ajusteCuota = cuota + saldo;
+                        
+                        html += `
+                            <tr>
+                                <td>${i}</td>
+                                <td class="text-end">${formatoMoneda(ajusteCuota)}</td>
+                                <td class="text-end">${formatoMoneda(interes)}</td>
+                                <td class="text-end">${formatoMoneda(ajusteCapital)}</td>
+                                <td class="text-end">RD$0.00</td>
+                            </tr>
+                        `;
+                    } else {
+                        html += `
+                            <tr>
+                                <td>${i}</td>
+                                <td class="text-end">${formatoMoneda(cuota)}</td>
+                                <td class="text-end">${formatoMoneda(interes)}</td>
+                                <td class="text-end">${formatoMoneda(capital)}</td>
+                                <td class="text-end">${formatoMoneda(Math.max(saldo, 0))}</td>
+                            </tr>
+                        `;
                     }
-                    
-                    html += `
-                        <tr>
-                            <td>${i}</td>
-                            <td class="text-end">${formatoMoneda(cuota)}</td>
-                            <td class="text-end">${formatoMoneda(interes)}</td>
-                            <td class="text-end">${formatoMoneda(capital)}</td>
-                            <td class="text-end">${formatoMoneda(Math.max(saldo, 0))}</td>
-                        </tr>
-                    `;
                 }
                 
                 paymentBody.innerHTML = html;
+            }
+            
+            // Función para cambiar el tipo de inicial
+            function cambiarTipoInicial(tipo) {
+                tipoInicial = tipo;
+                
+                // Actualizar clases activas de las pestañas
+                inicialTabs.forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelector(`.inicial-tab[data-tipo="${tipo}"]`).classList.add('active');
+                
+                // Mostrar/ocultar campos según el tipo seleccionado
+                if (tipo === 'porcentaje') {
+                    porcentajeField.classList.remove('hidden');
+                    montoField.classList.add('hidden');
+                } else {
+                    porcentajeField.classList.add('hidden');
+                    montoField.classList.remove('hidden');
+                }
+                
+                // Recalcular el financiamiento
+                calcularFinanciamiento();
             }
             
             // Event listeners para el selector de período
@@ -926,11 +1082,20 @@ Total a Pagar: RD$6,503.00</textarea>
                 }
             });
             
+            // Event listeners para los tabs de tipo de inicial
+            inicialTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tipo = this.getAttribute('data-tipo');
+                    cambiarTipoInicial(tipo);
+                });
+            });
+            
             // Event listeners para los inputs
             calcularBtn.addEventListener('click', calcularFinanciamiento);
             
             precioInput.addEventListener('input', calcularFinanciamiento);
             porcentajeInicialInput.addEventListener('input', calcularFinanciamiento);
+            montoInicialInput.addEventListener('input', calcularFinanciamiento);
             cuotasSelect.addEventListener('change', calcularFinanciamiento);
             tasaInteresInput.addEventListener('input', calcularFinanciamiento);
             accesoriosInput.addEventListener('input', calcularFinanciamiento);
@@ -955,11 +1120,8 @@ Total a Pagar: RD$6,503.00</textarea>
             // Inicializar la calculadora
             actualizarOpcionesCuotas();
             actualizarEtiquetas();
-            calcularFinanciamiento();
+            cambiarTipoInicial('porcentaje');
         });
     </script>
 </body>
 </html>
-
-
-
