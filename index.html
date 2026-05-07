@@ -411,8 +411,6 @@
                                 <span class="iphone-badge fw-bold">Parámetros Ajustables</span>
                             </div>
                             <h4><i class="bi bi-phone"></i> Financiamiento iPhone</h4>
-                            <p class="small text-muted">Personaliza el % de inicial, la tasa de interés y visualiza 4 plazos (4,6,8,10 quincenas).</p>
-                            
                             <div class="mb-3">
                                 <label>Precio del iPhone (RD$)</label>
                                 <input type="number" id="iphone-precio" class="form-control" value="15000" step="0.01">
@@ -475,7 +473,7 @@
                                     <button id="iphone-copiar" class="btn btn-copy"><i class="bi bi-clipboard"></i> Copiar Mensaje</button>
                                     <button id="iphone-whatsapp" class="btn btn-copy-whatsapp"><i class="bi bi-whatsapp"></i> WhatsApp</button>
                                 </div>
-                                <div class="form-text mt-2">✅ El mensaje incluye solo los plazos 4, 6, 8 y 10 quincenas con sus cuotas, totales e intereses. No incluye precio de contado ni pago inicial.</div>
+                                
                             </div>
                         </div>
                     </div>
@@ -668,13 +666,14 @@
                 
                 // Generar mensaje para cliente (sin precio contado, sin pago inicial)
                 let mensaje = "📱 *PLANES IPHONE - FINANCIAMIENTO* 📱\n";
-                mensaje += `✨ Tasa: ${tasaPorc}% quincenal · Plazos disponibles:\n\n`;
+                mensaje += `\n`;
                 for(let r of resultados) {
                     mensaje += `🔹 *${r.cuotas} Quincenas*\n`;
                     mensaje += `   • Cuota: ${formatoMoneda(r.cuotaValor)}\n`;
                     mensaje += `   • Total cuotas: ${formatoMoneda(r.total)}\n`;
+                    mensaje += `\n`;
                 }
-                mensaje += "─────────────────────────\n✅ Cotización sin compromiso. ¡Contáctanos!";
+              
                 textoArea.value = mensaje;
             }
             
