@@ -667,10 +667,11 @@
                 // Generar mensaje para cliente (sin precio contado, sin pago inicial)
                 let mensaje = "📱 *PLANES IPHONE - FINANCIAMIENTO* 📱\n";
                 mensaje += `\n`;
+                mensaje += `Inicial ${formatoMoneda(pagoInicial)}`
+                mensaje += `\n`;
                 for(let r of resultados) {
                     mensaje += `🔹 *${r.cuotas} Quincenas*\n`;
                     mensaje += `   • Cuota: ${formatoMoneda(r.cuotaValor)}\n`;
-                    mensaje += `   • Total cuotas: ${formatoMoneda(r.total)}\n`;
                     mensaje += `\n`;
                 }
               
