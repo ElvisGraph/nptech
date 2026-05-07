@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Financiamiento - Pagos Quincenales y Mensuales</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>NPTECH - Calculadora de Financiamiento | General + iPhone</title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -19,6 +19,7 @@
             --light-color: #ecf0f1;
             --dark-color: #2c3e50;
             --success-color: #27ae60;
+            --iphone-color: #0164fe;
         }
         
         body {
@@ -29,23 +30,15 @@
         .card {
             border: none;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease;
+            transition: transform 0.2s ease;
         }
         
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
         }
         
         .calculator-container {
             max-width: 1400px;
-        }
-        
-        .input-section .card {
-            background-color: #fff;
-        }
-        
-        .result-section .card {
-            background-color: #fff;
         }
         
         .form-label {
@@ -58,12 +51,11 @@
             border: 1px solid #ced4da;
             border-radius: 8px;
             padding: 0.75rem 1rem;
-            transition: all 0.3s ease;
         }
         
         .form-control:focus, .form-select:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+            box-shadow: 0 0 0 0.2rem rgba(1,100,254,0.25);
         }
         
         .btn-calculate {
@@ -73,255 +65,150 @@
             font-weight: 600;
             padding: 0.75rem;
             border-radius: 8px;
-            transition: all 0.3s ease;
             width: 100%;
         }
         
         .btn-calculate:hover {
             background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
             transform: translateY(-2px);
         }
         
         .btn-copy {
             background-color: var(--success-color);
-            border-color: var(--success-color);
             color: white;
             font-weight: 600;
-            padding: 0.75rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-copy:hover {
-            background-color: #219a52;
-            border-color: #219a52;
-            transform: translateY(-2px);
         }
         
         .btn-copy-whatsapp {
             background-color: #25D366;
-            border-color: #25D366;
             color: white;
             font-weight: 600;
-            padding: 0.75rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
         }
         
-        .btn-copy-whatsapp:hover {
-            background-color: #128C7E;
-            border-color: #128C7E;
+        .btn-copy-whatsapp:hover, .btn-copy:hover {
             transform: translateY(-2px);
         }
         
+        /* Pestañas personalizadas */
+        .mode-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 0;
+        }
+        
+        .mode-tab {
+            padding: 12px 28px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border-radius: 12px 12px 0 0;
+            transition: all 0.2s ease;
+            background-color: #f1f3f5;
+            color: #495057;
+            margin-right: 5px;
+        }
+        
+        .mode-tab i {
+            margin-right: 8px;
+        }
+        
+        .mode-tab.active {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 -3px 8px rgba(0,0,0,0.05);
+        }
+        
+        .mode-tab:not(.active):hover {
+            background-color: #e9ecef;
+            color: var(--primary-color);
+        }
+        
+        .mode-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .mode-content.active-mode {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        
+        /* Tablas */
         .result-table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
         }
-        
         .result-table th {
             background-color: var(--primary-color);
             color: white;
-            font-weight: 600;
-            padding: 1rem;
-            border: none;
+            padding: 0.8rem;
         }
-        
         .result-table td {
-            padding: 1rem;
+            padding: 0.8rem;
             border-bottom: 1px solid #dee2e6;
         }
-        
-        .result-table tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-        
         .result-table tr.highlight {
-            background-color: rgba(52, 152, 219, 0.1);
+            background-color: rgba(1,100,254,0.08);
             font-weight: 600;
         }
         
         .summary-item {
             display: flex;
             justify-content: space-between;
-            padding: 0.75rem 0;
+            padding: 0.6rem 0;
             border-bottom: 1px dashed #dee2e6;
         }
-        
         .summary-total {
             font-weight: 700;
-            font-size: 1.2rem;
-            color: var(--dark-color);
-            border-bottom: none;
-            margin-top: 0.5rem;
-            padding-top: 1rem;
+            font-size: 1.1rem;
             border-top: 2px solid var(--primary-color);
-        }
-        
-        .interest-amount {
-            color: var(--accent-color);
-            font-weight: 600;
+            margin-top: 0.5rem;
+            padding-top: 0.8rem;
         }
         
         .payment-table {
             width: 100%;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
-        
         .payment-table th {
             background-color: #f8f9fa;
-            font-weight: 600;
-            color: var(--dark-color);
-            padding: 0.75rem;
-            border-bottom: 2px solid #dee2e6;
         }
-        
-        .payment-table td {
-            padding: 0.75rem;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .payment-table tbody tr:hover {
-            background-color: rgba(52, 152, 219, 0.05);
-        }
-        
         .table-container {
-            max-height: 400px;
+            max-height: 350px;
             overflow-y: auto;
-            border-radius: 8px;
-            border: 1px solid #dee2e6;
-        }
-        
-        .header-icon {
-            color: var(--primary-color);
-            margin-right: 10px;
-        }
-        
-        .card-title {
-            color: var(--dark-color);
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        
-        .periodo-selector {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 1rem;
-        }
-        
-        .periodo-option {
-            flex: 1;
-            padding: 1rem;
-            border: 2px solid #dee2e6;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        
-        .periodo-option:hover {
-            border-color: var(--primary-color);
-            background-color: rgba(1, 100, 254, 0.05);
-        }
-        
-        .periodo-option.active {
-            border-color: var(--primary-color);
-            background-color: rgba(1, 100, 254, 0.1);
-        }
-        
-        .periodo-option input[type="radio"] {
-            display: none;
-        }
-        
-        .periodo-option label {
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin: 0;
-            width: 100%;
-        }
-        
-        .periodo-option small {
-            display: block;
-            color: #6c757d;
-            margin-top: 5px;
-        }
-        
-        /* Estilos para el selector de inicial */
-        .inicial-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid #dee2e6;
-            padding-bottom: 0.5rem;
-        }
-        
-        .inicial-tab {
-            flex: 1;
-            text-align: center;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            background-color: #f8f9fa;
-            color: var(--dark-color);
-        }
-        
-        .inicial-tab.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        .inicial-tab:hover:not(.active) {
-            background-color: #e9ecef;
-        }
-        
-        .inicial-field {
-            transition: all 0.3s ease;
-        }
-        
-        .inicial-field.hidden {
-            display: none;
-        }
-        
-        .copy-section {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-top: 1.5rem;
         }
         
         .copy-textarea {
             background-color: white;
             border: 1px solid #dee2e6;
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 1rem;
             font-size: 0.9rem;
             resize: vertical;
-            min-height: 120px;
             width: 100%;
-            margin-bottom: 1rem;
         }
         
-        .copy-textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        .iphone-badge {
+            background: #0164fe10;
+            color: #0164fe;
+            border-radius: 50px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
         }
         
-        .copy-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .copy-buttons .btn {
-            flex: 1;
-            min-width: 120px;
+        .interest-badge {
+            background-color: rgba(231,76,60,0.1);
+            color: #c0392b;
+            font-weight: 600;
+            border-radius: 20px;
+            padding: 2px 10px;
         }
         
         .toast-notification {
@@ -332,16 +219,12 @@
             color: white;
             padding: 1rem 1.5rem;
             border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             z-index: 1000;
             opacity: 0;
             transition: opacity 0.3s ease;
             pointer-events: none;
         }
-        
-        .toast-notification.show {
-            opacity: 1;
-        }
+        .toast-notification.show { opacity: 1; }
         
         footer {
             background-color: var(--dark-color);
@@ -351,39 +234,12 @@
             text-align: center;
         }
         
-        @media (max-width: 992px) {
-            .calculator-container {
-                padding: 0 15px;
-            }
-            
-            .result-section {
-                margin-top: 2rem;
-            }
-            
-            .copy-buttons .btn {
-                flex: auto;
-                width: 100%;
-            }
-        }
-        
         @media (max-width: 768px) {
-            .table-container {
-                max-height: 300px;
-            }
-            
-            .payment-table {
-                font-size: 0.8rem;
-            }
-            
-            .payment-table th, 
-            .payment-table td {
-                padding: 0.5rem;
-            }
+            .mode-tab { padding: 8px 16px; font-size: 0.9rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: var(--primary-color);">
         <div class="container">
             <a class="navbar-brand fw-bold" href="#">
@@ -393,734 +249,368 @@
     </nav>
     
     <div class="container calculator-container py-4">
-
-        <!-- Calculator Section -->
-        <div class="row g-4">
-            <!-- Input Section -->
-            <div class="col-lg-5">
-                <div class="card h-100">
-                    <div class="card-body p-4">
-                        <h3 class="card-title">
-                            <i class="bi bi-sliders2 header-icon"></i>Parámetros de Financiamiento
-                        </h3>
-                        
-                        <!-- Selector de Período -->
-                        <div class="mb-4">
-                            <label class="form-label">Período de Pago</label>
-                            <div class="periodo-selector">
-                                <div class="periodo-option active" id="option-quincenal">
-                                    <input type="radio" name="periodo" id="quincenal" value="quincenal" checked>
-                                    <label for="quincenal">
+        <!-- Pestañas selector de modo -->
+        <div class="mode-tabs">
+            <div class="mode-tab active" data-mode="general">
+                <i class="bi bi-layout-three-columns"></i> Modo General
+            </div>
+            <div class="mode-tab" data-mode="iphone">
+                <i class="bi bi-phone"></i> Modo iPhone <span class="badge bg-primary ms-1">Especial</span>
+            </div>
+        </div>
+        
+        <!-- ========================= MODO GENERAL (ORIGINAL COMPLETO) ========================= -->
+        <div id="general-mode" class="mode-content active-mode">
+            <div class="row g-4">
+                <!-- Input Section General -->
+                <div class="col-lg-5">
+                    <div class="card h-100">
+                        <div class="card-body p-4">
+                            <h3 class="card-title"><i class="bi bi-sliders2 me-2"></i>Parámetros Generales</h3>
+                            
+                            <!-- Selector de Período -->
+                            <div class="mb-4">
+                                <label class="form-label">Período de Pago</label>
+                                <div class="d-flex gap-3" id="general-periodo-buttons">
+                                    <div class="flex-fill text-center p-2 border rounded" id="general-quincenal-btn" style="cursor:pointer; background:#eef2ff;">
                                         <i class="bi bi-calendar-week"></i> Quincenal
-                                        <small>Cada 15 días</small>
-                                    </label>
-                                </div>
-                                <div class="periodo-option" id="option-mensual">
-                                    <input type="radio" name="periodo" id="mensual" value="mensual">
-                                    <label for="mensual">
+                                    </div>
+                                    <div class="flex-fill text-center p-2 border rounded" id="general-mensual-btn" style="cursor:pointer;">
                                         <i class="bi bi-calendar-month"></i> Mensual
-                                        <small>Cada 30 días</small>
-                                    </label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="precio" class="form-label">Precio del Producto (RD$)</label>
-                            <div class="input-group">
-                                <span class="input-group-text">RD$</span>
-                                <input type="number" class="form-control" id="precio" min="0" step="0.01" value="5000">
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Precio Producto (RD$)</label>
+                                <input type="number" id="g-precio" class="form-control" value="5000" step="0.01">
                             </div>
-                            <div class="form-text">Ingrese el precio total del producto a financiar</div>
-                        </div>
-                        
-                        <!-- Selector de tipo de inicial -->
-                        <div class="mb-3">
-                            <label class="form-label">Tipo de Pago Inicial</label>
-                            <div class="inicial-tabs" id="inicial-tabs">
-                                <div class="inicial-tab active" data-tipo="porcentaje">
-                                    <i class="bi bi-percent"></i> Porcentaje
-                                </div>
-                                <div class="inicial-tab" data-tipo="monto">
-                                    <i class="bi bi-cash-stack"></i> Monto Fijo
+                            
+                            <!-- Tipo inicial -->
+                            <div class="mb-2">
+                                <label class="form-label">Tipo Pago Inicial</label>
+                                <div class="d-flex gap-2">
+                                    <button type="button" id="g-tipo-porcentaje" class="btn btn-sm btn-outline-primary active">% Porcentaje</button>
+                                    <button type="button" id="g-tipo-monto" class="btn btn-sm btn-outline-primary">Monto Fijo</button>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <!-- Campo de Porcentaje de Pago Inicial -->
-                        <div class="mb-4 inicial-field" id="porcentaje-field">
-                            <label for="porcentajeInicial" class="form-label">Porcentaje de Pago Inicial (%)</label>
-                            <div class="input-group">
-                                <input type="number" class="form-control" id="porcentajeInicial" min="0" max="100" step="0.01" value="40">
-                                <span class="input-group-text">%</span>
+                            <div class="mb-3" id="g-porcentaje-field">
+                                <label>Porcentaje Inicial (%)</label>
+                                <input type="number" id="g-porcentaje" class="form-control" value="40" step="0.01">
                             </div>
-                            <div class="form-text">Porcentaje del precio que pagará al inicio</div>
-                        </div>
-                        
-                        <!-- Campo de Monto Fijo de Pago Inicial -->
-                        <div class="mb-4 inicial-field hidden" id="monto-field">
-                            <label for="montoInicial" class="form-label">Monto de Pago Inicial (RD$)</label>
-                            <div class="input-group">
-                                <span class="input-group-text">RD$</span>
-                                <input type="number" class="form-control" id="montoInicial" min="0" step="0.01" value="2000">
+                            <div class="mb-3 d-none" id="g-monto-field">
+                                <label>Monto Inicial (RD$)</label>
+                                <input type="number" id="g-monto" class="form-control" value="2000" step="0.01">
                             </div>
-                            <div class="form-text">Monto fijo que pagará al inicio</div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="cuotas" class="form-label" id="cuotas-label">Número de Cuotas Quincenales</label>
-                            <select class="form-select" id="cuotas">
-                                <!-- Las opciones se llenarán dinámicamente según el período -->
-                            </select>
-                            <div class="form-text" id="cuotas-text">Seleccione el plazo de financiamiento</div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="tasaInteres" class="form-label" id="tasa-label">Tasa de Interés Quincenal (%)</label>
-                            <div class="input-group">
-                                <input type="number" class="form-control" id="tasaInteres" min="0" step="0.01" value="15">
-                                <span class="input-group-text">%</span>
+                            
+                            <div class="mb-3">
+                                <label id="g-cuotas-label">Número de Cuotas Quincenales</label>
+                                <select id="g-cuotas" class="form-select"></select>
                             </div>
-                            <div class="form-text" id="tasa-text">Tasa de interés aplicada cada quincena</div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="accesorios" class="form-label">Accesorios o Gastos Adicionales (RD$)</label>
-                            <div class="input-group">
-                                <span class="input-group-text">RD$</span>
-                                <input type="number" class="form-control" id="accesorios" min="0" step="0.01" value="0">
+                            <div class="mb-3">
+                                <label id="g-tasa-label">Tasa Interés Quincenal (%)</label>
+                                <input type="number" id="g-tasa" class="form-control" value="15" step="0.01">
                             </div>
-                            <div class="form-text">Costo de accesorios, seguros o gastos adicionales</div>
-                        </div>
-                        
-                        <button id="calcular" class="btn btn-calculate mt-2">
-                            <i class="bi bi-calculator me-2"></i>Calcular Financiamiento
-                        </button>
-
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Results Section -->
-            <div class="col-lg-7">
-                <div class="card h-100">
-                    <div class="card-body p-4">
-                        <h3 class="card-title">
-                            <i class="bi bi-clipboard-data header-icon"></i>Resultados del Cálculo
-                        </h3>
-                        
-                        <!-- Results Table -->
-                        <div class="table-responsive mb-4">
-                            <table class="result-table table">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Concepto</th>
-                                        <th scope="col" class="text-end">Valor</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Precio del Producto</td>
-                                        <td class="text-end" id="result-precio">RD$5,000.00</td>
-                                    </tr>
-                                    <tr id="inicial-row">
-                                        <td>Pago Inicial</td>
-                                        <td class="text-end" id="result-inicial">RD$2,000.00</td>
-                                    </tr>
-                                    <tr id="inicial-porcentaje-row" style="display: none;">
-                                        <td>(% del Precio)</td>
-                                        <td class="text-end" id="result-inicial-porcentaje">40%</td>
-                                    </tr>
-                                    <tr id="inicial-monto-row" style="display: none;">
-                                        <td>(Monto Fijo)</td>
-                                        <td class="text-end" id="result-inicial-monto">RD$2,000.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Accesorios/Gastos Adicionales</td>
-                                        <td class="text-end" id="result-accesorios">RD$0.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Monto a Financiar</td>
-                                        <td class="text-end" id="result-financiar">RD$3,000.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td id="result-cuotas-label">Número de Cuotas Quincenales</td>
-                                        <td class="text-end" id="result-cuotas">6</td>
-                                    </tr>
-                                    <tr>
-                                        <td id="result-tasa-label">Tasa de Interés Quincenal</td>
-                                        <td class="text-end" id="result-tasa">15%</td>
-                                    </tr>
-                                    <tr class="highlight">
-                                        <td><strong>Total en Cuotas</strong></td>
-                                        <td class="text-end" id="result-total-cuotas">RD$4,503.00</td>
-                                    </tr>
-                                    <tr class="highlight">
-                                        <td><strong>Total a Pagar</strong></td>
-                                        <td class="text-end" id="result-total-pagar">RD$6,503.00</td>
-                                    </tr>
-                                </tbody>
-                             </table>
-                        </div>
-                        
-                        <!-- Summary Section -->
-                        <div class="card bg-light mb-4">
-                            <div class="card-body">
-                                <h5 class="card-title mb-3">Resumen del Financiamiento</h5>
-                                <div class="summary-item">
-                                    <span>Pago Inicial:</span>
-                                    <span id="summary-inicial">RD$2,000.00</span>
-                                </div>
-                                <div class="summary-item">
-                                    <span id="cuota-label">Valor de cada Cuota (6 Quincenas):</span>
-                                    <span id="summary-cuota">RD$750.50</span>
-                                </div>
-                                <div class="summary-item">
-                                    <span>Intereses Totales:</span>
-                                    <span id="summary-intereses" class="interest-amount">RD$1,503.00</span>
-                                </div>
-                                <div class="summary-item summary-total">
-                                    <span>Total a Pagar:</span>
-                                    <span id="summary-total">RD$6,503.00</span>
-                                </div>
+                            <div class="mb-3">
+                                <label>Accesorios (RD$)</label>
+                                <input type="number" id="g-accesorios" class="form-control" value="0" step="0.01">
                             </div>
-                        </div>
-                        
-                        <!-- Copy Section -->
-                        <div class="copy-section">
-                            <h5 class="card-title mb-3">
-                                <i class="bi bi-chat-dots header-icon"></i>Enviar a Cliente
-                            </h5>
-                            <textarea class="copy-textarea" id="resumen-cliente" readonly>Resumen de Financiamiento:
-Pago Inicial: RD$2,000.00
-6 Cuotas Quincenales de: RD$750.50 c/u
-Total a Pagar: RD$6,503.00</textarea>
-                            <div class="copy-buttons">
-                                <button class="btn btn-copy" id="copiar-resumen">
-                                    <i class="bi bi-clipboard me-2"></i>Copiar Texto
-                                </button>
-                                <button class="btn btn-copy-whatsapp" id="copiar-whatsapp">
-                                    <i class="bi bi-whatsapp me-2"></i>WhatsApp
-                                </button>
-                                <button class="btn btn-primary" id="copiar-detallado" style="background-color: var(--secondary-color); border-color: var(--secondary-color);">
-                                    <i class="bi bi-file-text me-2"></i>Copiar + Detalles
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Payment Schedule -->
-                        <div class="mt-4">
-                            <h5 class="card-title mb-3">
-                                <i class="bi bi-calendar-week header-icon" id="cronograma-icon"></i>
-                                <span id="cronograma-titulo">Cronograma de Pagos Quincenales</span>
-                            </h5>
-                            <div class="table-container">
-                                <table class="payment-table table table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col" id="periodo-columna">Quincena</th>
-                                            <th scope="col" class="text-end">Cuota (RD$)</th>
-                                            <th scope="col" class="text-end">Interés (RD$)</th>
-                                            <th scope="col" class="text-end">Capital (RD$)</th>
-                                            <th scope="col" class="text-end">Saldo (RD$)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="payment-body">
-                                        <!-- Aquí se generará el cronograma de pagos -->
-                                    </tbody>
-                                 </table>
-                            </div>
+                            <button id="g-calcular" class="btn btn-calculate">Calcular Financiamiento</button>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Toast Notification -->
-    <div class="toast-notification" id="toast-notification">
-        <i class="bi bi-check-circle me-2"></i> <span id="toast-message">Copiado al portapapeles</span>
-    </div>
-    
-    <!-- Footer -->
-    <footer class="mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <p class="mb-0">© 2024 NPTECH - Calculadora de Financiamiento. Todos los derechos reservados.</p>
-                </div>
-            </div>
-        </div>
-    </footer>
-    
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Elementos del DOM
-            const precioInput = document.getElementById('precio');
-            const porcentajeInicialInput = document.getElementById('porcentajeInicial');
-            const montoInicialInput = document.getElementById('montoInicial');
-            const cuotasSelect = document.getElementById('cuotas');
-            const tasaInteresInput = document.getElementById('tasaInteres');
-            const accesoriosInput = document.getElementById('accesorios');
-            const calcularBtn = document.getElementById('calcular');
-            
-            // Elementos del selector de período
-            const radioQuincenal = document.getElementById('quincenal');
-            const radioMensual = document.getElementById('mensual');
-            const optionQuincenal = document.getElementById('option-quincenal');
-            const optionMensual = document.getElementById('option-mensual');
-            
-            // Nuevos elementos para el selector de inicial
-            const inicialTabs = document.querySelectorAll('.inicial-tab');
-            const porcentajeField = document.getElementById('porcentaje-field');
-            const montoField = document.getElementById('monto-field');
-            const inicialPorcentajeRow = document.getElementById('inicial-porcentaje-row');
-            const inicialMontoRow = document.getElementById('inicial-monto-row');
-            const resultInicialPorcentaje = document.getElementById('result-inicial-porcentaje');
-            const resultInicialMonto = document.getElementById('result-inicial-monto');
-            
-            // Elementos de etiquetas dinámicas
-            const cuotasLabel = document.getElementById('cuotas-label');
-            const cuotasText = document.getElementById('cuotas-text');
-            const tasaLabel = document.getElementById('tasa-label');
-            const tasaText = document.getElementById('tasa-text');
-            const resultCuotasLabel = document.getElementById('result-cuotas-label');
-            const resultTasaLabel = document.getElementById('result-tasa-label');
-            const cuotaLabel = document.getElementById('cuota-label');
-            const cronogramaTitulo = document.getElementById('cronograma-titulo');
-            const cronogramaIcon = document.getElementById('cronograma-icon');
-            const periodoColumna = document.getElementById('periodo-columna');
-            
-            // Elementos de resultados
-            const resultPrecio = document.getElementById('result-precio');
-            const resultInicial = document.getElementById('result-inicial');
-            const resultAccesorios = document.getElementById('result-accesorios');
-            const resultFinanciar = document.getElementById('result-financiar');
-            const resultCuotas = document.getElementById('result-cuotas');
-            const resultTasa = document.getElementById('result-tasa');
-            const resultTotalCuotas = document.getElementById('result-total-cuotas');
-            const resultTotalPagar = document.getElementById('result-total-pagar');
-            
-            // Elementos del resumen
-            const summaryInicial = document.getElementById('summary-inicial');
-            const summaryCuota = document.getElementById('summary-cuota');
-            const summaryIntereses = document.getElementById('summary-intereses');
-            const summaryTotal = document.getElementById('summary-total');
-            
-            // Elementos de copia
-            const resumenCliente = document.getElementById('resumen-cliente');
-            const copiarResumen = document.getElementById('copiar-resumen');
-            const copiarWhatsapp = document.getElementById('copiar-whatsapp');
-            const copiarDetallado = document.getElementById('copiar-detallado');
-            const toastNotification = document.getElementById('toast-notification');
-            const toastMessage = document.getElementById('toast-message');
-            
-            // Elemento para el cronograma de pagos
-            const paymentBody = document.getElementById('payment-body');
-            
-            // Estado actual del período y tipo de inicial
-            let periodoActual = 'quincenal';
-            let tipoInicial = 'porcentaje'; // 'porcentaje' o 'monto'
-            
-            // Variable para el timeout del toast
-            let toastTimeout;
-            
-            // Función para formatear números como moneda
-            function formatoMoneda(valor) {
-                return new Intl.NumberFormat('es-DO', {
-                    style: 'currency',
-                    currency: 'DOP',
-                    minimumFractionDigits: 2
-                }).format(valor);
-            }
-            
-            // Función para mostrar notificación toast
-            function mostrarToast(mensaje) {
-                toastMessage.textContent = mensaje;
-                toastNotification.classList.add('show');
                 
-                clearTimeout(toastTimeout);
-                toastTimeout = setTimeout(() => {
-                    toastNotification.classList.remove('show');
-                }, 3000);
-            }
+                <div class="col-lg-7">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <h4>Resultados Generales</h4>
+                            <div class="table-responsive">
+                                <table class="result-table table">
+                                    <tbody id="g-resultados-body">
+                                        <!-- JS llena -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="bg-light p-3 rounded mb-3" id="g-resumen-adicional"></div>
+                            <div class="copy-section">
+                                <textarea id="g-texto-cliente" class="copy-textarea mb-2" rows="3" readonly></textarea>
+                                <div class="d-flex gap-2">
+                                    <button id="g-copiar" class="btn btn-copy"><i class="bi bi-clipboard"></i> Copiar</button>
+                                    <button id="g-whatsapp" class="btn btn-copy-whatsapp"><i class="bi bi-whatsapp"></i> WhatsApp</button>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <h5>Cronograma de Pagos</h5>
+                                <div class="table-container">
+                                    <table class="payment-table table table-sm">
+                                        <thead><tr><th>#</th><th>Cuota</th><th>Interés</th><th>Capital</th><th>Saldo</th></tr></thead>
+                                        <tbody id="g-cronograma-body"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ========================= MODO ESPECIAL IPHONE (NUEVO APARTADO) ========================= -->
+        <div id="iphone-mode" class="mode-content">
+            <div class="row g-4">
+                <div class="col-lg-5">
+                    <div class="card h-100 border-primary">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-apple fs-3 me-2" style="color:#0164fe;"></i>
+                                <span class="iphone-badge fw-bold">30% Inicial · 12% interés quincenal</span>
+                            </div>
+                            <h4><i class="bi bi-phone"></i> Financiamiento Especial iPhone</h4>
+                            <p class="small text-muted">Condiciones fijas: 30% de pago inicial, tasa 12% quincenal. Muestra 4 plazos (4,6,8,10 quincenas).</p>
+                            <div class="mb-3">
+                                <label>Precio del iPhone (RD$)</label>
+                                <input type="number" id="iphone-precio" class="form-control" value="15000" step="0.01">
+                            </div>
+                            <div class="mb-3">
+                                <label>Accesorios/Gastos adicionales (RD$)</label>
+                                <input type="number" id="iphone-accesorios" class="form-control" value="0" step="0.01">
+                            </div>
+                            <button id="iphone-calcular" class="btn btn-calculate mt-2">Actualizar Planes iPhone</button>
+                            <div class="mt-3 p-2 bg-light rounded">
+                                <div><strong>Pago Inicial (30%):</strong> <span id="iphone-inicial-mostrar">RD$0.00</span></div>
+                                <div><strong>Monto a Financiar + Acc.:</strong> <span id="iphone-monto-financiar">RD$0.00</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <h4><i class="bi bi-table"></i> Comparativa de Cuotas (4,6,8,10 quincenas)</h4>
+                            <div class="table-responsive mb-4">
+                                <table class="table table-bordered text-center">
+                                    <thead class="table-primary">
+                                        <tr><th>Plazo (Quincenas)</th><th>Cuota Quincenal</th><th>Total en Cuotas</th><th>Interés Total</th></tr>
+                                    </thead>
+                                    <tbody id="iphone-tabla-plazos"></tbody>
+                                </table>
+                            </div>
+                            <div class="copy-section-special bg-light p-3 rounded">
+                                <h6><i class="bi bi-chat-dots"></i> Mensaje para Cliente (solo planes, sin precio contado)</h6>
+                                <textarea id="iphone-texto-cliente" class="copy-textarea mb-2" rows="5" readonly></textarea>
+                                <div class="d-flex gap-2">
+                                    <button id="iphone-copiar" class="btn btn-copy"><i class="bi bi-clipboard"></i> Copiar Mensaje</button>
+                                    <button id="iphone-whatsapp" class="btn btn-copy-whatsapp"><i class="bi bi-whatsapp"></i> WhatsApp</button>
+                                </div>
+                                <div class="form-text mt-2">✅ El mensaje incluye solo los plazos 4,6,8,10 quincenas, sin mencionar precio de contado ni pago inicial.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>© 2024 NPTECH - Calculadora General + Módulo iPhone Especial</footer>
+    <div class="toast-notification" id="toast"><span id="toast-msg">Copiado</span></div>
+
+    <script>
+        // ---------------------- UTILS GLOBALES --------------------------
+        const toastDiv = document.getElementById('toast');
+        const toastMsgSpan = document.getElementById('toast-msg');
+        let toastTimeout;
+        function mostrarToast(mensaje) {
+            toastMsgSpan.innerText = mensaje;
+            toastDiv.classList.add('show');
+            if(toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => toastDiv.classList.remove('show'), 2500);
+        }
+        function formatoMoneda(valor) { return new Intl.NumberFormat('es-DO', {style:'currency', currency:'DOP'}).format(valor); }
+        
+        // ========================= 1. MODO GENERAL (Original completo) =========================
+        (function() {
+            let periodoGeneral = 'quincenal'; // quincenal o mensual
+            let tipoInicial = 'porcentaje';
+            const precioG = document.getElementById('g-precio');
+            const porcentajeG = document.getElementById('g-porcentaje');
+            const montoG = document.getElementById('g-monto');
+            const cuotasG = document.getElementById('g-cuotas');
+            const tasaG = document.getElementById('g-tasa');
+            const accesoriosG = document.getElementById('g-accesorios');
+            const btnCalcular = document.getElementById('g-calcular');
             
-            // Función para copiar texto al portapapeles
-            function copiarAlPortapapeles(texto, mensaje = 'Copiado al portapapeles') {
-                navigator.clipboard.writeText(texto).then(() => {
-                    mostrarToast(mensaje);
-                }).catch(err => {
-                    console.error('Error al copiar: ', err);
-                    alert('Error al copiar el texto. Por favor, intente manualmente.');
+            function actualizarOpcionesCuotasGeneral() {
+                const esQuincenal = periodoGeneral === 'quincenal';
+                cuotasG.innerHTML = '';
+                let opciones;
+                if(esQuincenal) {
+                    opciones = [1,2,3,4,5,6,7,8,10,12,18,24];
+                } else {
+                    opciones = [1,2,3,4,5,6,7,8,9,10,11,12];
+                }
+                opciones.forEach(val => {
+                    const opt = document.createElement('option');
+                    opt.value = val;
+                    opt.textContent = esQuincenal ? `${val} quincena${val!==1?'s':''}` : `${val} mes${val!==1?'es':''}`;
+                    if((esQuincenal && val===6) || (!esQuincenal && val===3)) opt.selected = true;
+                    cuotasG.appendChild(opt);
                 });
             }
-            
-            // Función para actualizar las opciones de cuotas según el período
-            function actualizarOpcionesCuotas() {
-                const esQuincenal = periodoActual === 'quincenal';
-                
-                // Limpiar opciones actuales
-                cuotasSelect.innerHTML = '';
-                
-                if (esQuincenal) {
-                    // Opciones quincenales - AHORA CON MÁS OPCIONES
-                    const opciones = [
-                        { value: 1, texto: '1 quincena (15 días)' },
-                        { value: 2, texto: '2 quincenas (1 mes)' },
-                        { value: 3, texto: '3 quincenas (1.5 meses)' },
-                        { value: 4, texto: '4 quincenas (2 meses)' },
-                        { value: 5, texto: '5 quincenas (2.5 meses)' },
-                        { value: 6, texto: '6 quincenas (3 meses)' },
-                        { value: 7, texto: '7 quincenas (3.5 meses)' },
-                        { value: 8, texto: '8 quincenas (4 meses)' },
-                        { value: 10, texto: '10 quincenas (5 meses)' },
-                        { value: 12, texto: '12 quincenas (6 meses)' },
-                        { value: 18, texto: '18 quincenas (9 meses)' },
-                        { value: 24, texto: '24 quincenas (12 meses)' }
-                    ];
-                    
-                    opciones.forEach(opcion => {
-                        const option = document.createElement('option');
-                        option.value = opcion.value;
-                        option.textContent = opcion.texto;
-                        if (opcion.value === 6) option.selected = true;
-                        cuotasSelect.appendChild(option);
-                    });
-                } else {
-                    // Opciones mensuales - TAMBIÉN AMPLIADAS
-                    const opciones = [
-                        { value: 1, texto: '1 mes' },
-                        { value: 2, texto: '2 meses' },
-                        { value: 3, texto: '3 meses' },
-                        { value: 4, texto: '4 meses' },
-                        { value: 5, texto: '5 meses' },
-                        { value: 6, texto: '6 meses' },
-                        { value: 7, texto: '7 meses' },
-                        { value: 8, texto: '8 meses' },
-                        { value: 9, texto: '9 meses' },
-                        { value: 10, texto: '10 meses' },
-                        { value: 11, texto: '11 meses' },
-                        { value: 12, texto: '12 meses' }
-                    ];
-                    
-                    opciones.forEach(opcion => {
-                        const option = document.createElement('option');
-                        option.value = opcion.value;
-                        option.textContent = opcion.texto;
-                        if (opcion.value === 3) option.selected = true;
-                        cuotasSelect.appendChild(option);
-                    });
-                }
+            function actualizarEtiquetasGeneral() {
+                const isQ = periodoGeneral === 'quincenal';
+                document.getElementById('g-cuotas-label').innerText = `Número de Cuotas ${isQ ? 'Quincenales' : 'Mensuales'}`;
+                document.getElementById('g-tasa-label').innerHTML = `Tasa Interés ${isQ ? 'Quincenal' : 'Mensual'} (%)`;
+                if(isQ && tasaG.value === '30') tasaG.value = '15';
+                if(!isQ && tasaG.value === '15') tasaG.value = '30';
+                // Cambiar estilo botones
+                const btnQ = document.getElementById('general-quincenal-btn');
+                const btnM = document.getElementById('general-mensual-btn');
+                if(isQ) { btnQ.style.background='#eef2ff'; btnM.style.background='white'; }
+                else { btnM.style.background='#eef2ff'; btnQ.style.background='white'; }
             }
             
-            // Función para actualizar todas las etiquetas según el período
-            function actualizarEtiquetas() {
-                const esQuincenal = periodoActual === 'quincenal';
-                const periodoTexto = esQuincenal ? 'Quincenal' : 'Mensual';
-                const periodoTextoLower = esQuincenal ? 'quincenal' : 'mensual';
-                const periodoSingular = esQuincenal ? 'quincena' : 'mes';
-                
-                // Actualizar clases activas
-                optionQuincenal.classList.toggle('active', esQuincenal);
-                optionMensual.classList.toggle('active', !esQuincenal);
-                
-                // Actualizar etiquetas de entrada
-                cuotasLabel.textContent = `Número de Cuotas ${periodoTexto}`;
-                cuotasText.textContent = `Seleccione el plazo de financiamiento en ${periodoTextoLower}s`;
-                
-                tasaLabel.textContent = `Tasa de Interés ${periodoTexto} (%)`;
-                tasaText.textContent = `Tasa de interés aplicada cada ${periodoSingular}`;
-                tasaInteresInput.value = esQuincenal ? '15' : '30'; // Ajuste sugerido para tasa mensual
-                
-                // Actualizar etiquetas de resultados
-                resultCuotasLabel.textContent = `Número de Cuotas ${periodoTexto}`;
-                resultTasaLabel.textContent = `Tasa de Interés ${periodoTexto}`;
-                
-                // Actualizar el valor de la tasa mostrada
-                const tasaValue = parseFloat(tasaInteresInput.value) || 0;
-                resultTasa.textContent = `${tasaValue}%`;
-                
-                // Actualizar etiquetas del resumen
-                cronogramaTitulo.textContent = `Cronograma de Pagos ${periodoTexto}`;
-                periodoColumna.textContent = periodoSingular.charAt(0).toUpperCase() + periodoSingular.slice(1);
-                
-                // Actualizar icono del cronograma
-                cronogramaIcon.className = esQuincenal ? 'bi bi-calendar-week header-icon' : 'bi bi-calendar-month header-icon';
-            }
-            
-            // Función para obtener el texto de la cuota para el resumen
-            function obtenerTextoCuota(cuotas) {
-                const esQuincenal = periodoActual === 'quincenal';
-                
-                if (esQuincenal) {
-                    if (cuotas === 1) return `Valor de la Cuota (1 Quincena):`;
-                    return `Valor de cada Cuota (${cuotas} Quincenas):`;
-                } else {
-                    if (cuotas === 1) return `Valor de la Cuota (1 Mes):`;
-                    return `Valor de cada Cuota (${cuotas} Meses):`;
-                }
-            }
-            
-            // Función para generar el texto del resumen para el cliente
-            function generarResumenCliente(detallado = false) {
-                const esQuincenal = periodoActual === 'quincenal';
-                const pagoInicial = summaryInicial.textContent;
-                const cuotas = resultCuotas.textContent;
-                const valorCuota = summaryCuota.textContent;
-                const totalPagar = summaryTotal.textContent;
-                const precio = resultPrecio.textContent;
-                const intereses = summaryIntereses.textContent;
-                const periodoTexto = esQuincenal ? 'Quincenal' : 'Mensual';
-                const periodoSingular = esQuincenal ? 'quincena' : 'mes';
-                
-                let resumen = `📊 *RESUMEN DE FINANCIAMIENTO*\n`;
-                resumen += `💰 *Precio del Producto:* ${precio}\n`;
-                resumen += `💵 *Pago Inicial:* ${pagoInicial}\n`;
-                
-                if (cuotas === '1') {
-                    resumen += `📅 *${cuotas} Cuota ${periodoTexto}* de: ${valorCuota}\n`;
-                } else {
-                    resumen += `📅 *${cuotas} Cuotas ${periodoTexto}s* de: ${valorCuota} c/u\n`;
-                }
-                
-                if (detallado) {
-                    resumen += `📈 *Intereses Totales:* ${intereses}\n`;
-                }
-                
-                resumen += `💳 *Total a Pagar:* ${totalPagar}\n\n`;
-                
-                if (detallado) {
-                    resumen += `📋 *DETALLE DE PAGOS*\n\n`;
-                    
-                    // Obtener el cronograma de pagos
-                    const filas = document.querySelectorAll('#payment-body tr');
-                    filas.forEach((fila, index) => {
-                        const columnas = fila.querySelectorAll('td');
-                        if (columnas.length >= 2) {
-                            const numero = columnas[0].textContent;
-                            const cuota = columnas[1].textContent;
-                            resumen += `${periodoSingular} ${numero}: ${cuota}\n`;
-                        }
-                    });
-                }
-                
-                resumen += `🤝 *¡Gracias por su preferencia!*`;
-                
-                return resumen;
-            }
-            
-            // Función para obtener el monto del pago inicial según el tipo seleccionado
             function obtenerPagoInicial(precio) {
-                if (tipoInicial === 'porcentaje') {
-                    const porcentaje = parseFloat(porcentajeInicialInput.value) || 0;
-                    const porcentajeValue = Math.min(100, Math.max(0, porcentaje));
-                    return (precio * porcentajeValue / 100);
-                } else {
-                    return parseFloat(montoInicialInput.value) || 0;
-                }
+                if(tipoInicial === 'porcentaje') return precio * (parseFloat(porcentajeG.value||0)/100);
+                else return parseFloat(montoG.value||0);
             }
             
-            // Función para calcular el financiamiento
-            function calcularFinanciamiento() {
-                // Obtener valores de los inputs
-                const precio = parseFloat(precioInput.value) || 0;
-                let cuotas = parseInt(cuotasSelect.value) || 1;
-                const tasaInteres = parseFloat(tasaInteresInput.value) || 0;
-                const accesorios = parseFloat(accesoriosInput.value) || 0;
-                
-                // Calcular pago inicial según el tipo seleccionado
+            function calcularGeneral() {
+                const precio = parseFloat(precioG.value) || 0;
+                const acc = parseFloat(accesoriosG.value) || 0;
+                const cuotas = parseInt(cuotasG.value) || 1;
+                const tasaPorc = parseFloat(tasaG.value) || 0;
                 const pagoInicial = obtenerPagoInicial(precio);
-                
-                // Calcular monto a financiar
-                const montoFinanciar = precio - pagoInicial + accesorios;
-                
-                // Validar que el monto a financiar no sea negativo
-                const montoFinanciarValido = Math.max(0, montoFinanciar);
-                
-                // Convertir tasa porcentual a decimal
-                const tasaInteresDecimal = tasaInteres / 100;
-                
-                // Calcular cuota usando la fórmula de amortización
-                let cuota = 0;
-                if (tasaInteresDecimal > 0 && montoFinanciarValido > 0 && cuotas > 0) {
-                    cuota = montoFinanciarValido * (tasaInteresDecimal * Math.pow(1 + tasaInteresDecimal, cuotas)) / 
-                                  (Math.pow(1 + tasaInteresDecimal, cuotas) - 1);
-                } else if (montoFinanciarValido > 0 && cuotas > 0) {
-                    cuota = montoFinanciarValido / cuotas;
-                }
-                
-                // Calcular total en cuotas
-                const totalCuotas = cuota * cuotas;
-                
-                // Calcular total a pagar
+                const montoFinanciar = Math.max(0, precio - pagoInicial + acc);
+                const tasaDec = tasaPorc / 100;
+                let cuotaValor = 0;
+                if(tasaDec > 0 && montoFinanciar>0 && cuotas>0) {
+                    const factor = Math.pow(1+tasaDec, cuotas);
+                    cuotaValor = montoFinanciar * (tasaDec * factor) / (factor - 1);
+                } else if(montoFinanciar>0) cuotaValor = montoFinanciar/cuotas;
+                const totalCuotas = cuotaValor * cuotas;
+                const intereses = totalCuotas - montoFinanciar;
                 const totalPagar = pagoInicial + totalCuotas;
                 
-                // Calcular intereses totales
-                const interesesTotales = totalCuotas - montoFinanciarValido;
-                
-                // Actualizar la etiqueta de cuota con el número de cuotas seleccionado
-                cuotaLabel.textContent = obtenerTextoCuota(cuotas);
-                
-                // Actualizar la interfaz con los resultados
-                resultPrecio.textContent = formatoMoneda(precio);
-                resultInicial.textContent = formatoMoneda(pagoInicial);
-                
-                // Mostrar información adicional del pago inicial según el tipo
-                if (tipoInicial === 'porcentaje') {
-                    const porcentaje = parseFloat(porcentajeInicialInput.value) || 0;
-                    resultInicialPorcentaje.textContent = `${Math.min(100, Math.max(0, porcentaje))}%`;
-                    inicialPorcentajeRow.style.display = 'table-row';
-                    inicialMontoRow.style.display = 'none';
-                } else {
-                    const monto = parseFloat(montoInicialInput.value) || 0;
-                    resultInicialMonto.textContent = formatoMoneda(monto);
-                    inicialMontoRow.style.display = 'table-row';
-                    inicialPorcentajeRow.style.display = 'none';
-                }
-                
-                resultAccesorios.textContent = formatoMoneda(accesorios);
-                resultFinanciar.textContent = formatoMoneda(montoFinanciarValido);
-                resultCuotas.textContent = cuotas;
-                resultTasa.textContent = `${tasaInteres}%`;
-                resultTotalCuotas.textContent = formatoMoneda(totalCuotas);
-                resultTotalPagar.textContent = formatoMoneda(totalPagar);
-                
-                summaryInicial.textContent = formatoMoneda(pagoInicial);
-                summaryCuota.textContent = formatoMoneda(cuota);
-                summaryIntereses.textContent = formatoMoneda(interesesTotales);
-                summaryTotal.textContent = formatoMoneda(totalPagar);
-                
-                // Actualizar el textarea de resumen para cliente
-                resumenCliente.value = generarResumenCliente(false);
-                
-                // Generar cronograma de pagos
-                generarCronogramaPagos(montoFinanciarValido, cuota, tasaInteresDecimal, cuotas);
-            }
-            
-            // Función para generar el cronograma de pagos
-            function generarCronogramaPagos(montoFinanciar, cuota, tasaInteresDecimal, cuotas) {
+                // Mostrar tabla resultados
+                document.getElementById('g-resultados-body').innerHTML = `
+                    <tr><td>Precio Producto</td><td class="text-end">${formatoMoneda(precio)}</td></tr>
+                    <tr><td>Pago Inicial</td><td class="text-end">${formatoMoneda(pagoInicial)}</td></tr>
+                    <tr><td>Accesorios</td><td class="text-end">${formatoMoneda(acc)}</td></tr>
+                    <tr><td>Monto a Financiar</td><td class="text-end">${formatoMoneda(montoFinanciar)}</td></tr>
+                    <tr><td>Cuotas</td><td class="text-end">${cuotas}</td></tr>
+                    <tr><td>Tasa</td><td class="text-end">${tasaPorc}%</td></tr>
+                    <tr class="highlight"><td><strong>Total Cuotas</strong></td><td class="text-end">${formatoMoneda(totalCuotas)}</td></tr>
+                    <tr class="highlight"><td><strong>Total a Pagar</strong></td><td class="text-end">${formatoMoneda(totalPagar)}</td></tr>
+                `;
+                document.getElementById('g-resumen-adicional').innerHTML = `
+                    <div class="summary-item"><span>Valor cuota (${cuotas} ${periodoGeneral==='quincenal'?'quincenas':'meses'}):</span><span>${formatoMoneda(cuotaValor)}</span></div>
+                    <div class="summary-item"><span>Intereses Totales:</span><span class="interest-amount">${formatoMoneda(intereses)}</span></div>
+                    <div class="summary-item summary-total"><span>Total a Pagar:</span><span>${formatoMoneda(totalPagar)}</span></div>
+                `;
+                // Texto cliente
+                const texto = `📊 *RESUMEN FINANCIAMIENTO*\nPago Inicial: ${formatoMoneda(pagoInicial)}\n${cuotas} cuotas de: ${formatoMoneda(cuotaValor)} c/u\nTotal a Pagar: ${formatoMoneda(totalPagar)}`;
+                document.getElementById('g-texto-cliente').value = texto;
+                // cronograma
                 let saldo = montoFinanciar;
-                let html = '';
-                
-                for (let i = 1; i <= cuotas; i++) {
-                    const interes = saldo * tasaInteresDecimal;
-                    const capital = cuota - interes;
+                let htmlCrono = '';
+                for(let i=1;i<=cuotas;i++) {
+                    let interes = saldo * tasaDec;
+                    let capital = cuotaValor - interes;
                     saldo -= capital;
-                    
-                    // Si es la última cuota, ajustar para evitar decimales residuales
-                    if (i === cuotas && Math.abs(saldo) > 0.01) {
-                        const ajusteCapital = capital + saldo;
-                        const ajusteCuota = cuota + saldo;
-                        
-                        html += `
-                            <tr>
-                                <td>${i}</td>
-                                <td class="text-end">${formatoMoneda(ajusteCuota)}</td>
-                                <td class="text-end">${formatoMoneda(interes)}</td>
-                                <td class="text-end">${formatoMoneda(ajusteCapital)}</td>
-                                <td class="text-end">RD$0.00</td>
-                            </tr>
-                        `;
-                    } else {
-                        html += `
-                            <tr>
-                                <td>${i}</td>
-                                <td class="text-end">${formatoMoneda(cuota)}</td>
-                                <td class="text-end">${formatoMoneda(interes)}</td>
-                                <td class="text-end">${formatoMoneda(capital)}</td>
-                                <td class="text-end">${formatoMoneda(Math.max(saldo, 0))}</td>
-                            </tr>
-                        `;
+                    if(i===cuotas && Math.abs(saldo)>0.01) { capital += saldo; let newCuota = cuotaValor+saldo; htmlCrono+=`<tr><td>${i}</td><td class="text-end">${formatoMoneda(newCuota)}</td><td class="text-end">${formatoMoneda(interes)}</td><td class="text-end">${formatoMoneda(capital)}</td><td class="text-end">0.00</td></tr>`; saldo=0; }
+                    else htmlCrono+=`<tr><td>${i}</td><td class="text-end">${formatoMoneda(cuotaValor)}</td><td class="text-end">${formatoMoneda(interes)}</td><td class="text-end">${formatoMoneda(capital)}</td><td class="text-end">${formatoMoneda(Math.max(saldo,0))}</td></tr>`;
+                }
+                document.getElementById('g-cronograma-body').innerHTML = htmlCrono;
+            }
+            
+            // Eventos general
+            document.getElementById('general-quincenal-btn').onclick = () => { periodoGeneral='quincenal'; actualizarOpcionesCuotasGeneral(); actualizarEtiquetasGeneral(); calcularGeneral(); };
+            document.getElementById('general-mensual-btn').onclick = () => { periodoGeneral='mensual'; actualizarOpcionesCuotasGeneral(); actualizarEtiquetasGeneral(); calcularGeneral(); };
+            document.getElementById('g-tipo-porcentaje').onclick = () => { tipoInicial='porcentaje'; document.getElementById('g-porcentaje-field').style.display='block'; document.getElementById('g-monto-field').style.display='none'; calcularGeneral(); };
+            document.getElementById('g-tipo-monto').onclick = () => { tipoInicial='monto'; document.getElementById('g-porcentaje-field').style.display='none'; document.getElementById('g-monto-field').style.display='block'; calcularGeneral(); };
+            
+            [precioG, porcentajeG, montoG, cuotasG, tasaG, accesoriosG].forEach(el => el.addEventListener('input', calcularGeneral));
+            btnCalcular.addEventListener('click', calcularGeneral);
+            document.getElementById('g-copiar').onclick = () => { navigator.clipboard.writeText(document.getElementById('g-texto-cliente').value); mostrarToast("Texto copiado"); };
+            document.getElementById('g-whatsapp').onclick = () => { window.open(`https://wa.me/?text=${encodeURIComponent(document.getElementById('g-texto-cliente').value)}`,'_blank'); mostrarToast("WhatsApp"); };
+            
+            actualizarOpcionesCuotasGeneral();
+            actualizarEtiquetasGeneral();
+            calcularGeneral();
+        })();
+        
+        // ========================= 2. MODO IPHONE ESPECIAL (30% inicial, 12% interes, plazos 4,6,8,10) =========================
+        (function() {
+            const precioInput = document.getElementById('iphone-precio');
+            const accesoriosInput = document.getElementById('iphone-accesorios');
+            const btnCalcular = document.getElementById('iphone-calcular');
+            const tablaBody = document.getElementById('iphone-tabla-plazos');
+            const inicialSpan = document.getElementById('iphone-inicial-mostrar');
+            const montoFinSpan = document.getElementById('iphone-monto-financiar');
+            const textoArea = document.getElementById('iphone-texto-cliente');
+            const PLAZOS = [4,6,8,10];
+            const TASA = 12; // 12% quincenal
+            const INICIAL_PORC = 30;
+            
+            function calcularIPhone() {
+                let precio = parseFloat(precioInput.value) || 0;
+                let accesorios = parseFloat(accesoriosInput.value) || 0;
+                let pagoInicial = precio * (INICIAL_PORC / 100);
+                let montoFinanciar = Math.max(0, (precio - pagoInicial) + accesorios);
+                inicialSpan.innerText = formatoMoneda(pagoInicial);
+                montoFinSpan.innerText = formatoMoneda(montoFinanciar);
+                const tasaDecimal = TASA / 100;
+                let resultados = [];
+                let htmlTabla = '';
+                for(let n of PLAZOS) {
+                    let cuota = 0;
+                    if(montoFinanciar > 0) {
+                        if(tasaDecimal > 0) {
+                            const factor = Math.pow(1 + tasaDecimal, n);
+                            cuota = montoFinanciar * (tasaDecimal * factor) / (factor - 1);
+                        } else cuota = montoFinanciar / n;
                     }
+                    const totalCuotas = cuota * n;
+                    const intereses = totalCuotas - montoFinanciar;
+                    htmlTabla += `<tr>
+                        <td class="fw-bold">${n} Quincenas</td>
+                        <td>${formatoMoneda(cuota)}</td>
+                        <td>${formatoMoneda(totalCuotas)}</td>
+                        <td><span class="interest-badge">${formatoMoneda(intereses)}</span></td>
+                    </tr>`;
+                    resultados.push({cuotas:n, cuotaValor:cuota, total:totalCuotas, intereses});
                 }
+                tablaBody.innerHTML = htmlTabla;
                 
-                paymentBody.innerHTML = html;
+                // construir texto cliente SIN precio contado y SIN pago inicial
+                let mensaje = "📱 *PLANES IPHONE - FINANCIAMIENTO ESPECIAL* 📱\n";
+                mensaje += `✨ Tasa fija ${TASA}% quincenal · Plazos disponibles:\n\n`;
+                for(let r of resultados) {
+                    mensaje += `🔹 *${r.cuotas} Quincenas*\n   Cuota: ${formatoMoneda(r.cuotaValor)}\n   Total cuotas: ${formatoMoneda(r.total)}\n   Intereses: ${formatoMoneda(r.intereses)}\n\n`;
+                }
+                mensaje += "─────────────────────────\n✅ Cotización sin compromiso. ¡Contáctanos!";
+                textoArea.value = mensaje;
             }
             
-            // Función para cambiar el tipo de inicial
-            function cambiarTipoInicial(tipo) {
-                tipoInicial = tipo;
-                
-                // Actualizar clases activas de las pestañas
-                inicialTabs.forEach(tab => {
-                    tab.classList.remove('active');
-                });
-                document.querySelector(`.inicial-tab[data-tipo="${tipo}"]`).classList.add('active');
-                
-                // Mostrar/ocultar campos según el tipo seleccionado
-                if (tipo === 'porcentaje') {
-                    porcentajeField.classList.remove('hidden');
-                    montoField.classList.add('hidden');
-                } else {
-                    porcentajeField.classList.add('hidden');
-                    montoField.classList.remove('hidden');
-                }
-                
-                // Recalcular el financiamiento
-                calcularFinanciamiento();
-            }
-            
-            // Event listeners para el selector de período
-            radioQuincenal.addEventListener('change', function() {
-                if (this.checked) {
-                    periodoActual = 'quincenal';
-                    actualizarOpcionesCuotas();
-                    actualizarEtiquetas();
-                    calcularFinanciamiento();
-                }
+            btnCalcular.addEventListener('click', calcularIPhone);
+            precioInput.addEventListener('input', calcularIPhone);
+            accesoriosInput.addEventListener('input', calcularIPhone);
+            document.getElementById('iphone-copiar').onclick = () => { navigator.clipboard.writeText(textoArea.value); mostrarToast("Mensaje iPhone copiado"); };
+            document.getElementById('iphone-whatsapp').onclick = () => { window.open(`https://wa.me/?text=${encodeURIComponent(textoArea.value)}`,'_blank'); mostrarToast("Abriendo WhatsApp"); };
+            calcularIPhone();
+        })();
+        
+        // Cambio de pestañas
+        const tabs = document.querySelectorAll('.mode-tab');
+        const contents = { general: document.getElementById('general-mode'), iphone: document.getElementById('iphone-mode') };
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const mode = tab.getAttribute('data-mode');
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                document.querySelectorAll('.mode-content').forEach(c => c.classList.remove('active-mode'));
+                if(mode === 'general') contents.general.classList.add('active-mode');
+                else contents.iphone.classList.add('active-mode');
             });
-            
-            radioMensual.addEventListener('change', function() {
-                if (this.checked) {
-                    periodoActual = 'mensual';
-                    actualizarOpcionesCuotas();
-                    actualizarEtiquetas();
-                    calcularFinanciamiento();
-                }
-            });
-            
-            // Event listeners para los tabs de tipo de inicial
-            inicialTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const tipo = this.getAttribute('data-tipo');
-                    cambiarTipoInicial(tipo);
-                });
-            });
-            
-            // Event listeners para los inputs
-            calcularBtn.addEventListener('click', calcularFinanciamiento);
-            
-            precioInput.addEventListener('input', calcularFinanciamiento);
-            porcentajeInicialInput.addEventListener('input', calcularFinanciamiento);
-            montoInicialInput.addEventListener('input', calcularFinanciamiento);
-            cuotasSelect.addEventListener('change', calcularFinanciamiento);
-            tasaInteresInput.addEventListener('input', calcularFinanciamiento);
-            accesoriosInput.addEventListener('input', calcularFinanciamiento);
-            
-            // Event listeners para los botones de copia
-            copiarResumen.addEventListener('click', function() {
-                copiarAlPortapapeles(resumenCliente.value, 'Resumen copiado al portapapeles');
-            });
-            
-            copiarWhatsapp.addEventListener('click', function() {
-                const textoWhatsApp = generarResumenCliente(false);
-                const urlWhatsApp = `https://wa.me/?text=${encodeURIComponent(textoWhatsApp)}`;
-                window.open(urlWhatsApp, '_blank');
-                mostrarToast('Abriendo WhatsApp...');
-            });
-            
-            copiarDetallado.addEventListener('click', function() {
-                const textoDetallado = generarResumenCliente(true);
-                copiarAlPortapapeles(textoDetallado, 'Resumen detallado copiado al portapapeles');
-            });
-            
-            // Inicializar la calculadora
-            actualizarOpcionesCuotas();
-            actualizarEtiquetas();
-            cambiarTipoInicial('porcentaje');
         });
     </script>
 </body>
