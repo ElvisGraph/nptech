@@ -211,6 +211,44 @@
             padding: 2px 10px;
         }
         
+        .periodo-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 1rem;
+        }
+        .periodo-option {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .periodo-option.active {
+            border-color: var(--primary-color);
+            background-color: rgba(1,100,254,0.1);
+        }
+        
+        .inicial-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+        .inicial-tab {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        .inicial-tab.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
         .toast-notification {
             position: fixed;
             bottom: 20px;
@@ -237,6 +275,10 @@
         @media (max-width: 768px) {
             .mode-tab { padding: 8px 16px; font-size: 0.9rem; }
         }
+        
+        .hidden-field {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -262,44 +304,47 @@
         <!-- ========================= MODO GENERAL (ORIGINAL COMPLETO) ========================= -->
         <div id="general-mode" class="mode-content active-mode">
             <div class="row g-4">
-                <!-- Input Section General -->
                 <div class="col-lg-5">
                     <div class="card h-100">
                         <div class="card-body p-4">
                             <h3 class="card-title"><i class="bi bi-sliders2 me-2"></i>Parámetros Generales</h3>
                             
-                            <!-- Selector de Período -->
                             <div class="mb-4">
                                 <label class="form-label">Período de Pago</label>
-                                <div class="d-flex gap-3" id="general-periodo-buttons">
-                                    <div class="flex-fill text-center p-2 border rounded" id="general-quincenal-btn" style="cursor:pointer; background:#eef2ff;">
+                                <div class="periodo-selector">
+                                    <div class="periodo-option active" id="general-quincenal-opt">
                                         <i class="bi bi-calendar-week"></i> Quincenal
                                     </div>
-                                    <div class="flex-fill text-center p-2 border rounded" id="general-mensual-btn" style="cursor:pointer;">
+                                    <div class="periodo-option" id="general-mensual-opt">
                                         <i class="bi bi-calendar-month"></i> Mensual
                                     </div>
                                 </div>
                             </div>
                             
                             <div class="mb-3">
-                                <label class="form-label">Precio Producto (RD$)</label>
+                                <label class="form-label">Precio del Producto (RD$)</label>
                                 <input type="number" id="g-precio" class="form-control" value="5000" step="0.01">
                             </div>
                             
-                            <!-- Tipo inicial -->
-                            <div class="mb-2">
-                                <label class="form-label">Tipo Pago Inicial</label>
-                                <div class="d-flex gap-2">
-                                    <button type="button" id="g-tipo-porcentaje" class="btn btn-sm btn-outline-primary active">% Porcentaje</button>
-                                    <button type="button" id="g-tipo-monto" class="btn btn-sm btn-outline-primary">Monto Fijo</button>
+                            <div class="mb-3">
+                                <label class="form-label">Tipo de Pago Inicial</label>
+                                <div class="inicial-tabs">
+                                    <div class="inicial-tab active" data-tipo="porcentaje">
+                                        <i class="bi bi-percent"></i> Porcentaje
+                                    </div>
+                                    <div class="inicial-tab" data-tipo="monto">
+                                        <i class="bi bi-cash-stack"></i> Monto Fijo
+                                    </div>
                                 </div>
                             </div>
+                            
                             <div class="mb-3" id="g-porcentaje-field">
-                                <label>Porcentaje Inicial (%)</label>
+                                <label>Porcentaje de Pago Inicial (%)</label>
                                 <input type="number" id="g-porcentaje" class="form-control" value="40" step="0.01">
                             </div>
-                            <div class="mb-3 d-none" id="g-monto-field">
-                                <label>Monto Inicial (RD$)</label>
+                            
+                            <div class="mb-3 hidden-field" id="g-monto-field">
+                                <label>Monto de Pago Inicial (RD$)</label>
                                 <input type="number" id="g-monto" class="form-control" value="2000" step="0.01">
                             </div>
                             
@@ -308,11 +353,11 @@
                                 <select id="g-cuotas" class="form-select"></select>
                             </div>
                             <div class="mb-3">
-                                <label id="g-tasa-label">Tasa Interés Quincenal (%)</label>
+                                <label id="g-tasa-label">Tasa de Interés Quincenal (%)</label>
                                 <input type="number" id="g-tasa" class="form-control" value="15" step="0.01">
                             </div>
                             <div class="mb-3">
-                                <label>Accesorios (RD$)</label>
+                                <label>Accesorios o Gastos Adicionales (RD$)</label>
                                 <input type="number" id="g-accesorios" class="form-control" value="0" step="0.01">
                             </div>
                             <button id="g-calcular" class="btn btn-calculate">Calcular Financiamiento</button>
@@ -323,22 +368,23 @@
                 <div class="col-lg-7">
                     <div class="card">
                         <div class="card-body p-4">
-                            <h4>Resultados Generales</h4>
+                            <h4>Resultados del Financiamiento</h4>
                             <div class="table-responsive">
                                 <table class="result-table table">
-                                    <tbody id="g-resultados-body">
-                                        <!-- JS llena -->
-                                    </tbody>
+                                    <tbody id="g-resultados-body"></tbody>
                                 </table>
                             </div>
                             <div class="bg-light p-3 rounded mb-3" id="g-resumen-adicional"></div>
+                            
                             <div class="copy-section">
+                                <label class="form-label">Mensaje para el Cliente</label>
                                 <textarea id="g-texto-cliente" class="copy-textarea mb-2" rows="3" readonly></textarea>
                                 <div class="d-flex gap-2">
                                     <button id="g-copiar" class="btn btn-copy"><i class="bi bi-clipboard"></i> Copiar</button>
                                     <button id="g-whatsapp" class="btn btn-copy-whatsapp"><i class="bi bi-whatsapp"></i> WhatsApp</button>
                                 </div>
                             </div>
+                            
                             <div class="mt-4">
                                 <h5>Cronograma de Pagos</h5>
                                 <div class="table-container">
@@ -354,7 +400,7 @@
             </div>
         </div>
         
-        <!-- ========================= MODO ESPECIAL IPHONE (NUEVO APARTADO) ========================= -->
+        <!-- ========================= MODO IPHONE (PARÁMETROS AJUSTABLES) ========================= -->
         <div id="iphone-mode" class="mode-content">
             <div class="row g-4">
                 <div class="col-lg-5">
@@ -362,22 +408,44 @@
                         <div class="card-body p-4">
                             <div class="d-flex align-items-center mb-3">
                                 <i class="bi bi-apple fs-3 me-2" style="color:#0164fe;"></i>
-                                <span class="iphone-badge fw-bold">30% Inicial · 12% interés quincenal</span>
+                                <span class="iphone-badge fw-bold">Parámetros Ajustables</span>
                             </div>
-                            <h4><i class="bi bi-phone"></i> Financiamiento Especial iPhone</h4>
-                            <p class="small text-muted">Condiciones fijas: 30% de pago inicial, tasa 12% quincenal. Muestra 4 plazos (4,6,8,10 quincenas).</p>
+                            <h4><i class="bi bi-phone"></i> Financiamiento iPhone</h4>
+                            <p class="small text-muted">Personaliza el % de inicial, la tasa de interés y visualiza 4 plazos (4,6,8,10 quincenas).</p>
+                            
                             <div class="mb-3">
                                 <label>Precio del iPhone (RD$)</label>
                                 <input type="number" id="iphone-precio" class="form-control" value="15000" step="0.01">
                             </div>
+                            
                             <div class="mb-3">
-                                <label>Accesorios/Gastos adicionales (RD$)</label>
+                                <label>Pago Inicial (%)</label>
+                                <div class="input-group">
+                                    <input type="number" id="iphone-inicial-porc" class="form-control" value="30" step="1" min="0" max="100">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                <div class="form-text">Porcentaje del precio que pagará al inicio</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label>Tasa de Interés Quincenal (%)</label>
+                                <div class="input-group">
+                                    <input type="number" id="iphone-tasa" class="form-control" value="12" step="0.5" min="0">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                <div class="form-text">Interés aplicado cada quincena</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label>Accesorios o Gastos Adicionales (RD$)</label>
                                 <input type="number" id="iphone-accesorios" class="form-control" value="0" step="0.01">
                             </div>
+                            
                             <button id="iphone-calcular" class="btn btn-calculate mt-2">Actualizar Planes iPhone</button>
+                            
                             <div class="mt-3 p-2 bg-light rounded">
-                                <div><strong>Pago Inicial (30%):</strong> <span id="iphone-inicial-mostrar">RD$0.00</span></div>
-                                <div><strong>Monto a Financiar + Acc.:</strong> <span id="iphone-monto-financiar">RD$0.00</span></div>
+                                <div><strong>💰 Pago Inicial:</strong> <span id="iphone-inicial-mostrar">RD$0.00</span></div>
+                                <div><strong>📊 Monto a Financiar + Acc.:</strong> <span id="iphone-monto-financiar">RD$0.00</span></div>
                             </div>
                         </div>
                     </div>
@@ -385,15 +453,21 @@
                 <div class="col-lg-7">
                     <div class="card">
                         <div class="card-body p-4">
-                            <h4><i class="bi bi-table"></i> Comparativa de Cuotas (4,6,8,10 quincenas)</h4>
+                            <h4><i class="bi bi-table"></i> Comparativa de Cuotas (4, 6, 8, 10 quincenas)</h4>
                             <div class="table-responsive mb-4">
                                 <table class="table table-bordered text-center">
                                     <thead class="table-primary">
-                                        <tr><th>Plazo (Quincenas)</th><th>Cuota Quincenal</th><th>Total en Cuotas</th><th>Interés Total</th></tr>
+                                        <tr>
+                                            <th>Plazo (Quincenas)</th>
+                                            <th>Cuota Quincenal</th>
+                                            <th>Total en Cuotas</th>
+                                            <th>Interés Total</th>
+                                        </tr>
                                     </thead>
                                     <tbody id="iphone-tabla-plazos"></tbody>
                                 </table>
                             </div>
+                            
                             <div class="copy-section-special bg-light p-3 rounded">
                                 <h6><i class="bi bi-chat-dots"></i> Mensaje para Cliente (solo planes, sin precio contado)</h6>
                                 <textarea id="iphone-texto-cliente" class="copy-textarea mb-2" rows="5" readonly></textarea>
@@ -401,7 +475,7 @@
                                     <button id="iphone-copiar" class="btn btn-copy"><i class="bi bi-clipboard"></i> Copiar Mensaje</button>
                                     <button id="iphone-whatsapp" class="btn btn-copy-whatsapp"><i class="bi bi-whatsapp"></i> WhatsApp</button>
                                 </div>
-                                <div class="form-text mt-2">✅ El mensaje incluye solo los plazos 4,6,8,10 quincenas, sin mencionar precio de contado ni pago inicial.</div>
+                                <div class="form-text mt-2">✅ El mensaje incluye solo los plazos 4, 6, 8 y 10 quincenas con sus cuotas, totales e intereses. No incluye precio de contado ni pago inicial.</div>
                             </div>
                         </div>
                     </div>
@@ -426,9 +500,9 @@
         }
         function formatoMoneda(valor) { return new Intl.NumberFormat('es-DO', {style:'currency', currency:'DOP'}).format(valor); }
         
-        // ========================= 1. MODO GENERAL (Original completo) =========================
+        // ========================= 1. MODO GENERAL =========================
         (function() {
-            let periodoGeneral = 'quincenal'; // quincenal o mensual
+            let periodoGeneral = 'quincenal';
             let tipoInicial = 'porcentaje';
             const precioG = document.getElementById('g-precio');
             const porcentajeG = document.getElementById('g-porcentaje');
@@ -436,17 +510,11 @@
             const cuotasG = document.getElementById('g-cuotas');
             const tasaG = document.getElementById('g-tasa');
             const accesoriosG = document.getElementById('g-accesorios');
-            const btnCalcular = document.getElementById('g-calcular');
             
             function actualizarOpcionesCuotasGeneral() {
                 const esQuincenal = periodoGeneral === 'quincenal';
                 cuotasG.innerHTML = '';
-                let opciones;
-                if(esQuincenal) {
-                    opciones = [1,2,3,4,5,6,7,8,10,12,18,24];
-                } else {
-                    opciones = [1,2,3,4,5,6,7,8,9,10,11,12];
-                }
+                let opciones = esQuincenal ? [1,2,3,4,5,6,7,8,10,12,18,24] : [1,2,3,4,5,6,7,8,9,10,11,12];
                 opciones.forEach(val => {
                     const opt = document.createElement('option');
                     opt.value = val;
@@ -455,17 +523,13 @@
                     cuotasG.appendChild(opt);
                 });
             }
+            
             function actualizarEtiquetasGeneral() {
                 const isQ = periodoGeneral === 'quincenal';
                 document.getElementById('g-cuotas-label').innerText = `Número de Cuotas ${isQ ? 'Quincenales' : 'Mensuales'}`;
-                document.getElementById('g-tasa-label').innerHTML = `Tasa Interés ${isQ ? 'Quincenal' : 'Mensual'} (%)`;
-                if(isQ && tasaG.value === '30') tasaG.value = '15';
-                if(!isQ && tasaG.value === '15') tasaG.value = '30';
-                // Cambiar estilo botones
-                const btnQ = document.getElementById('general-quincenal-btn');
-                const btnM = document.getElementById('general-mensual-btn');
-                if(isQ) { btnQ.style.background='#eef2ff'; btnM.style.background='white'; }
-                else { btnM.style.background='#eef2ff'; btnQ.style.background='white'; }
+                document.getElementById('g-tasa-label').innerHTML = `Tasa de Interés ${isQ ? 'Quincenal' : 'Mensual'} (%)`;
+                if(isQ && parseFloat(tasaG.value) >= 25) tasaG.value = '15';
+                if(!isQ && parseFloat(tasaG.value) <= 20) tasaG.value = '30';
             }
             
             function obtenerPagoInicial(precio) {
@@ -490,26 +554,24 @@
                 const intereses = totalCuotas - montoFinanciar;
                 const totalPagar = pagoInicial + totalCuotas;
                 
-                // Mostrar tabla resultados
                 document.getElementById('g-resultados-body').innerHTML = `
                     <tr><td>Precio Producto</td><td class="text-end">${formatoMoneda(precio)}</td></tr>
                     <tr><td>Pago Inicial</td><td class="text-end">${formatoMoneda(pagoInicial)}</td></tr>
                     <tr><td>Accesorios</td><td class="text-end">${formatoMoneda(acc)}</td></tr>
                     <tr><td>Monto a Financiar</td><td class="text-end">${formatoMoneda(montoFinanciar)}</td></tr>
-                    <tr><td>Cuotas</td><td class="text-end">${cuotas}</td></tr>
-                    <tr><td>Tasa</td><td class="text-end">${tasaPorc}%</td></tr>
-                    <tr class="highlight"><td><strong>Total Cuotas</strong></td><td class="text-end">${formatoMoneda(totalCuotas)}</td></tr>
+                    <tr><td>${periodoGeneral==='quincenal'?'Cuotas Quincenales':'Cuotas Mensuales'}</td><td class="text-end">${cuotas}</td></tr>
+                    <tr><td>Tasa de Interés</td><td class="text-end">${tasaPorc}%</td></tr>
+                    <tr class="highlight"><td><strong>Total en Cuotas</strong></td><td class="text-end">${formatoMoneda(totalCuotas)}</td></tr>
                     <tr class="highlight"><td><strong>Total a Pagar</strong></td><td class="text-end">${formatoMoneda(totalPagar)}</td></tr>
                 `;
                 document.getElementById('g-resumen-adicional').innerHTML = `
-                    <div class="summary-item"><span>Valor cuota (${cuotas} ${periodoGeneral==='quincenal'?'quincenas':'meses'}):</span><span>${formatoMoneda(cuotaValor)}</span></div>
+                    <div class="summary-item"><span>Valor de cada cuota (${cuotas} ${periodoGeneral==='quincenal'?'quincenas':'meses'}):</span><span>${formatoMoneda(cuotaValor)}</span></div>
                     <div class="summary-item"><span>Intereses Totales:</span><span class="interest-amount">${formatoMoneda(intereses)}</span></div>
                     <div class="summary-item summary-total"><span>Total a Pagar:</span><span>${formatoMoneda(totalPagar)}</span></div>
                 `;
-                // Texto cliente
-                const texto = `📊 *RESUMEN FINANCIAMIENTO*\nPago Inicial: ${formatoMoneda(pagoInicial)}\n${cuotas} cuotas de: ${formatoMoneda(cuotaValor)} c/u\nTotal a Pagar: ${formatoMoneda(totalPagar)}`;
-                document.getElementById('g-texto-cliente').value = texto;
-                // cronograma
+                const textoCliente = `📊 *RESUMEN DE FINANCIAMIENTO*\n💰 Precio: ${formatoMoneda(precio)}\n💵 Pago Inicial: ${formatoMoneda(pagoInicial)}\n📅 ${cuotas} cuotas de: ${formatoMoneda(cuotaValor)} c/u\n💳 Total a Pagar: ${formatoMoneda(totalPagar)}`;
+                document.getElementById('g-texto-cliente').value = textoCliente;
+                
                 let saldo = montoFinanciar;
                 let htmlCrono = '';
                 for(let i=1;i<=cuotas;i++) {
@@ -522,52 +584,75 @@
                 document.getElementById('g-cronograma-body').innerHTML = htmlCrono;
             }
             
-            // Eventos general
-            document.getElementById('general-quincenal-btn').onclick = () => { periodoGeneral='quincenal'; actualizarOpcionesCuotasGeneral(); actualizarEtiquetasGeneral(); calcularGeneral(); };
-            document.getElementById('general-mensual-btn').onclick = () => { periodoGeneral='mensual'; actualizarOpcionesCuotasGeneral(); actualizarEtiquetasGeneral(); calcularGeneral(); };
-            document.getElementById('g-tipo-porcentaje').onclick = () => { tipoInicial='porcentaje'; document.getElementById('g-porcentaje-field').style.display='block'; document.getElementById('g-monto-field').style.display='none'; calcularGeneral(); };
-            document.getElementById('g-tipo-monto').onclick = () => { tipoInicial='monto'; document.getElementById('g-porcentaje-field').style.display='none'; document.getElementById('g-monto-field').style.display='block'; calcularGeneral(); };
+            document.getElementById('general-quincenal-opt').onclick = () => { periodoGeneral='quincenal'; actualizarOpcionesCuotasGeneral(); actualizarEtiquetasGeneral(); calcularGeneral(); document.querySelector('#general-quincenal-opt').classList.add('active'); document.querySelector('#general-mensual-opt').classList.remove('active'); };
+            document.getElementById('general-mensual-opt').onclick = () => { periodoGeneral='mensual'; actualizarOpcionesCuotasGeneral(); actualizarEtiquetasGeneral(); calcularGeneral(); document.querySelector('#general-mensual-opt').classList.add('active'); document.querySelector('#general-quincenal-opt').classList.remove('active'); };
+            
+            document.querySelectorAll('.inicial-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tipoInicial = this.getAttribute('data-tipo');
+                    document.querySelectorAll('.inicial-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    if(tipoInicial === 'porcentaje') {
+                        document.getElementById('g-porcentaje-field').classList.remove('hidden-field');
+                        document.getElementById('g-monto-field').classList.add('hidden-field');
+                    } else {
+                        document.getElementById('g-porcentaje-field').classList.add('hidden-field');
+                        document.getElementById('g-monto-field').classList.remove('hidden-field');
+                    }
+                    calcularGeneral();
+                });
+            });
             
             [precioG, porcentajeG, montoG, cuotasG, tasaG, accesoriosG].forEach(el => el.addEventListener('input', calcularGeneral));
-            btnCalcular.addEventListener('click', calcularGeneral);
+            document.getElementById('g-calcular').addEventListener('click', calcularGeneral);
             document.getElementById('g-copiar').onclick = () => { navigator.clipboard.writeText(document.getElementById('g-texto-cliente').value); mostrarToast("Texto copiado"); };
-            document.getElementById('g-whatsapp').onclick = () => { window.open(`https://wa.me/?text=${encodeURIComponent(document.getElementById('g-texto-cliente').value)}`,'_blank'); mostrarToast("WhatsApp"); };
+            document.getElementById('g-whatsapp').onclick = () => { window.open(`https://wa.me/?text=${encodeURIComponent(document.getElementById('g-texto-cliente').value)}`,'_blank'); mostrarToast("Abriendo WhatsApp"); };
             
             actualizarOpcionesCuotasGeneral();
             actualizarEtiquetasGeneral();
             calcularGeneral();
         })();
         
-        // ========================= 2. MODO IPHONE ESPECIAL (30% inicial, 12% interes, plazos 4,6,8,10) =========================
+        // ========================= 2. MODO IPHONE (PARÁMETROS AJUSTABLES) =========================
         (function() {
             const precioInput = document.getElementById('iphone-precio');
+            const inicialPorcInput = document.getElementById('iphone-inicial-porc');
+            const tasaInput = document.getElementById('iphone-tasa');
             const accesoriosInput = document.getElementById('iphone-accesorios');
             const btnCalcular = document.getElementById('iphone-calcular');
             const tablaBody = document.getElementById('iphone-tabla-plazos');
             const inicialSpan = document.getElementById('iphone-inicial-mostrar');
             const montoFinSpan = document.getElementById('iphone-monto-financiar');
             const textoArea = document.getElementById('iphone-texto-cliente');
-            const PLAZOS = [4,6,8,10];
-            const TASA = 12; // 12% quincenal
-            const INICIAL_PORC = 30;
+            const PLAZOS = [4, 6, 8, 10];
             
             function calcularIPhone() {
                 let precio = parseFloat(precioInput.value) || 0;
+                let inicialPorc = parseFloat(inicialPorcInput.value) || 0;
+                let tasaPorc = parseFloat(tasaInput.value) || 0;
                 let accesorios = parseFloat(accesoriosInput.value) || 0;
-                let pagoInicial = precio * (INICIAL_PORC / 100);
+                
+                // Limitar porcentaje inicial entre 0 y 100
+                inicialPorc = Math.min(100, Math.max(0, inicialPorc));
+                let pagoInicial = precio * (inicialPorc / 100);
                 let montoFinanciar = Math.max(0, (precio - pagoInicial) + accesorios);
+                
                 inicialSpan.innerText = formatoMoneda(pagoInicial);
                 montoFinSpan.innerText = formatoMoneda(montoFinanciar);
-                const tasaDecimal = TASA / 100;
+                
+                const tasaDecimal = tasaPorc / 100;
                 let resultados = [];
                 let htmlTabla = '';
+                
                 for(let n of PLAZOS) {
                     let cuota = 0;
                     if(montoFinanciar > 0) {
-                        if(tasaDecimal > 0) {
+                        if(tasaDecimal > 0 && n > 0) {
                             const factor = Math.pow(1 + tasaDecimal, n);
                             cuota = montoFinanciar * (tasaDecimal * factor) / (factor - 1);
-                        } else cuota = montoFinanciar / n;
+                        } else {
+                            cuota = montoFinanciar / n;
+                        }
                     }
                     const totalCuotas = cuota * n;
                     const intereses = totalCuotas - montoFinanciar;
@@ -579,13 +664,15 @@
                     </tr>`;
                     resultados.push({cuotas:n, cuotaValor:cuota, total:totalCuotas, intereses});
                 }
-                tablaBody.innerHTML = htmlTabla;
+                tablaBody.innerHTML = htmlTabla || '<tr><td colspan="4" class="text-muted">Ingrese un precio válido</td></tr>';
                 
-                // construir texto cliente SIN precio contado y SIN pago inicial
-                let mensaje = "📱 *PLANES IPHONE - FINANCIAMIENTO ESPECIAL* 📱\n";
-                mensaje += `✨ Tasa fija ${TASA}% quincenal · Plazos disponibles:\n\n`;
+                // Generar mensaje para cliente (sin precio contado, sin pago inicial)
+                let mensaje = "📱 *PLANES IPHONE - FINANCIAMIENTO* 📱\n";
+                mensaje += `✨ Tasa: ${tasaPorc}% quincenal · Plazos disponibles:\n\n`;
                 for(let r of resultados) {
-                    mensaje += `🔹 *${r.cuotas} Quincenas*\n   Cuota: ${formatoMoneda(r.cuotaValor)}\n   Total cuotas: ${formatoMoneda(r.total)}\n   Intereses: ${formatoMoneda(r.intereses)}\n\n`;
+                    mensaje += `🔹 *${r.cuotas} Quincenas*\n`;
+                    mensaje += `   • Cuota: ${formatoMoneda(r.cuotaValor)}\n`;
+                    mensaje += `   • Total cuotas: ${formatoMoneda(r.total)}\n`;
                 }
                 mensaje += "─────────────────────────\n✅ Cotización sin compromiso. ¡Contáctanos!";
                 textoArea.value = mensaje;
@@ -593,9 +680,13 @@
             
             btnCalcular.addEventListener('click', calcularIPhone);
             precioInput.addEventListener('input', calcularIPhone);
+            inicialPorcInput.addEventListener('input', calcularIPhone);
+            tasaInput.addEventListener('input', calcularIPhone);
             accesoriosInput.addEventListener('input', calcularIPhone);
+            
             document.getElementById('iphone-copiar').onclick = () => { navigator.clipboard.writeText(textoArea.value); mostrarToast("Mensaje iPhone copiado"); };
             document.getElementById('iphone-whatsapp').onclick = () => { window.open(`https://wa.me/?text=${encodeURIComponent(textoArea.value)}`,'_blank'); mostrarToast("Abriendo WhatsApp"); };
+            
             calcularIPhone();
         })();
         
