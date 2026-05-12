@@ -688,12 +688,13 @@
                 const periodoCliente = periodoGeneral === 'quincenal' ? 'quincenales' : 'mensuales';
                 const textoCliente = inicialExcede ? '' : (
                     `📋 *DETALLE DE FINANCIAMIENTO*\n` +
-                    `━━━━━━━━━━━━━━━━━━━━\n` +
+                    `──────────────\n` +
                     `💵 *Inicial:* ${formatoMoneda(pagoInicial)}\n` +
-                    `━━━━━━━━━━━━━━━━━━━━\n` +
+                    `──────────────\n` +
                     `📅 *${cuotas} cuotas ${periodoCliente}* de ${formatoMoneda(cuotaValor)}\n` +
-                    `━━━━━━━━━━━━━━━━━━━━\n` +
-                    `✅ *Total a pagar: ${formatoMoneda(totalPagar)}*`
+                    `──────────────\n` +
+                    `✅ *Total a pagar: ${formatoMoneda(totalPagar)}*\n` +
+                    `_(incluye inicial + cuotas)_`
                 );
                 document.getElementById('g-texto-cliente').value = textoCliente;
             }
@@ -819,16 +820,16 @@
                 tablaBody.innerHTML = htmlTabla || '<tr><td colspan="4" class="text-muted">Ingrese un precio válido</td></tr>';
                 
                 let mensaje = `📱 *PLANES DE FINANCIAMIENTO*\n`;
-                mensaje += `━━━━━━━━━━━━━━━━━━━━\n`;
+                mensaje += `──────────────\n`;
                 mensaje += `💵 *Pago inicial:* ${formatoMoneda(pagoInicial)}\n`;
-                mensaje += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+                mensaje += `──────────────\n\n`;
                 for (let r of resultados) {
                     const totalR = pagoInicial + r.total;
                     mensaje += `🔹 *Opción ${r.cuotas} quincenas*\n`;
                     mensaje += `   Cuota: ${formatoMoneda(r.cuotaValor)}\n`;
-                    mensaje += `   Total a pagar: *${formatoMoneda(totalR)}*\n\n`;
+                    mensaje += `   Total a pagar: *${formatoMoneda(totalR)}* _(inicial + cuotas)_\n\n`;
                 }
-                mensaje += `━━━━━━━━━━━━━━━━━━━━\n`;
+                mensaje += `──────────────\n`;
                 mensaje += `_Elige el plan que mejor se adapte a ti_ ✅`;
               
                 textoArea.value = mensaje;
