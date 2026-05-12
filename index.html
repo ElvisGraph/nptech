@@ -173,19 +173,6 @@
             font-weight: 600;
         }
         
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.6rem 0;
-            border-bottom: 1px dashed #dee2e6;
-        }
-        .summary-total {
-            font-weight: 700;
-            font-size: 1.1rem;
-            border-top: 2px solid var(--primary-color);
-            margin-top: 0.5rem;
-            padding-top: 0.8rem;
-        }
         
         .copy-textarea {
             background-color: white;
@@ -390,7 +377,6 @@
                                     <tbody id="g-resultados-body"></tbody>
                                 </table>
                             </div>
-                            <div class="bg-light p-3 rounded mb-3" id="g-resumen-adicional"></div>
                             
                             <div class="copy-section">
                                 <label class="form-label">Mensaje para el Cliente</label>
@@ -454,9 +440,9 @@
                                 <table class="table table-bordered text-center">
                                     <thead class="table-primary">
                                         <tr>
-                                            <th>Plazo (Quincenas)</th>
+                                            <th>Plazo</th>
                                             <th>Cuota Quincenal</th>
-                                            <th>Total en Cuotas</th>
+                                            <th>Total a Pagar</th>
                                             <th>Interés Total</th>
                                         </tr>
                                     </thead>
@@ -671,7 +657,6 @@
                 
                 if (precio <= 0) {
                     document.getElementById('g-resultados-body').innerHTML = '<tr><td colspan="2" class="text-center text-muted py-4">Indica el precio del producto para ver los resultados.</td></tr>';
-                    document.getElementById('g-resumen-adicional').innerHTML = '';
                     document.getElementById('g-texto-cliente').value = '';
                     return;
                 }
@@ -687,30 +672,29 @@
                 const totalCuotas = cuotaValor * cuotas;
                 const intereses = totalCuotas - montoFinanciar;
                 const totalPagar = pagoInicial + totalCuotas;
+                const periodo = periodoGeneral === 'quincenal' ? 'quincenas' : 'meses';
                 
                 const filaAviso = inicialExcede
                     ? `<tr class="table-warning"><td colspan="2" class="text-center small">El pago inicial es mayor que el precio: revisa el porcentaje o el monto fijo.</td></tr>`
                     : '';
                 document.getElementById('g-resultados-body').innerHTML = filaAviso + `
-                    <tr><td>Precio Producto</td><td class="text-end">${formatoMoneda(precio)}</td></tr>
+                    <tr><td>Precio</td><td class="text-end">${formatoMoneda(precio)}</td></tr>
                     <tr><td>Pago Inicial</td><td class="text-end">${formatoMoneda(pagoInicial)}</td></tr>
                     <tr><td>Monto a Financiar</td><td class="text-end">${formatoMoneda(montoFinanciar)}</td></tr>
-                    <tr><td>${periodoGeneral==='quincenal'?'Cuotas Quincenales':'Cuotas Mensuales'}</td><td class="text-end">${cuotas}</td></tr>
-                    <tr><td>Tasa de Interés</td><td class="text-end">${tasaPorc}%</td></tr>
-                    <tr class="highlight"><td><strong>Total en Cuotas</strong></td><td class="text-end">${formatoMoneda(totalCuotas)}</td></tr>
-                    <tr class="highlight"><td><strong>Total a Pagar</strong></td><td class="text-end">${formatoMoneda(totalPagar)}</td></tr>
-                `;
-                document.getElementById('g-resumen-adicional').innerHTML = `
-                    <div class="summary-item"><span>Valor de cada cuota (${cuotas} ${periodoGeneral==='quincenal'?'quincenas':'meses'}):</span><span>${formatoMoneda(cuotaValor)}</span></div>
-                    <div class="summary-item"><span>Intereses Totales:</span><span class="interest-amount">${formatoMoneda(intereses)}</span></div>
-                    <div class="summary-item summary-total"><span>Total a Pagar:</span><span>${formatoMoneda(totalPagar)}</span></div>
+                    <tr><td>${cuotas} ${periodo} de</td><td class="text-end">${formatoMoneda(cuotaValor)}</td></tr>
+                    <tr><td>Intereses (${tasaPorc}% por ${periodo.slice(0,-1)})</td><td class="text-end">${formatoMoneda(intereses)}</td></tr>
+                    <tr class="highlight"><td><strong>Total a Pagar</strong></td><td class="text-end"><strong>${formatoMoneda(totalPagar)}</strong></td></tr>
                 `;
                 const periodoCliente = periodoGeneral === 'quincenal' ? 'quincenales' : 'mensuales';
-                const textoCliente = inicialExcede ? '' : (`*Tu financiamiento*\n\n` +
-                    `Precio: ${formatoMoneda(precio)}\n` +
-                    `Inicial: ${formatoMoneda(pagoInicial)}\n` +
-                    `Luego: ${cuotas} cuotas de ${formatoMoneda(cuotaValor)} (${periodoCliente})\n\n` +
-                    `En total pagarías: ${formatoMoneda(totalPagar)}`);
+                const textoCliente = inicialExcede ? '' : (
+                    `📋 *DETALLE DE FINANCIAMIENTO*\n` +
+                    `━━━━━━━━━━━━━━━━━━━━\n` +
+                    `💵 *Inicial:* ${formatoMoneda(pagoInicial)}\n` +
+                    `━━━━━━━━━━━━━━━━━━━━\n` +
+                    `📅 *${cuotas} cuotas ${periodoCliente}* de ${formatoMoneda(cuotaValor)}\n` +
+                    `━━━━━━━━━━━━━━━━━━━━\n` +
+                    `✅ *Total a pagar: ${formatoMoneda(totalPagar)}*`
+                );
                 document.getElementById('g-texto-cliente').value = textoCliente;
             }
             
@@ -822,23 +806,30 @@
                         }
                     }
                     const totalCuotas = cuota * n;
+                    const totalConInicial = pagoInicial + totalCuotas;
                     const intereses = totalCuotas - montoFinanciar;
                     htmlTabla += `<tr>
                         <td class="fw-bold">${n} Quincenas</td>
                         <td>${formatoMoneda(cuota)}</td>
-                        <td>${formatoMoneda(totalCuotas)}</td>
+                        <td class="fw-bold">${formatoMoneda(totalConInicial)}</td>
                         <td><span class="interest-badge">${formatoMoneda(intereses)}</span></td>
                     </tr>`;
                     resultados.push({cuotas:n, cuotaValor:cuota, total:totalCuotas, intereses});
                 }
                 tablaBody.innerHTML = htmlTabla || '<tr><td colspan="4" class="text-muted">Ingrese un precio válido</td></tr>';
                 
-                let mensaje = `*Planes iPhone*\n\n`;
-                mensaje += `Pago inicial: ${formatoMoneda(pagoInicial)}\n\n`;
-                mensaje += `Lo que queda lo puedes pagar así (cuota por quincena):\n`;
+                let mensaje = `📱 *PLANES DE FINANCIAMIENTO*\n`;
+                mensaje += `━━━━━━━━━━━━━━━━━━━━\n`;
+                mensaje += `💵 *Pago inicial:* ${formatoMoneda(pagoInicial)}\n`;
+                mensaje += `━━━━━━━━━━━━━━━━━━━━\n\n`;
                 for (let r of resultados) {
-                    mensaje += `• ${r.cuotas} quincenas: ${formatoMoneda(r.cuotaValor)} c/u\n`;
+                    const totalR = pagoInicial + r.total;
+                    mensaje += `🔹 *Opción ${r.cuotas} quincenas*\n`;
+                    mensaje += `   Cuota: ${formatoMoneda(r.cuotaValor)}\n`;
+                    mensaje += `   Total a pagar: *${formatoMoneda(totalR)}*\n\n`;
                 }
+                mensaje += `━━━━━━━━━━━━━━━━━━━━\n`;
+                mensaje += `_Elige el plan que mejor se adapte a ti_ ✅`;
               
                 textoArea.value = mensaje;
             }
