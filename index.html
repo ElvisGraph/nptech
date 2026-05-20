@@ -1,880 +1,469 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <meta name="theme-color" content="#0164fe">
-    <title>NPTECH - Calculadora de Financiamiento | General + iPhone</title>
-    
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-    
-    <style>
-        :root {
-            --primary-color: #0164fe;
-            --secondary-color: #2980b9;
-            --accent-color: #e74c3c;
-            --light-color: #ecf0f1;
-            --dark-color: #2c3e50;
-            --success-color: #27ae60;
-            --iphone-color: #0164fe;
-        }
-        
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .card {
-            border: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: transform 0.2s ease;
-        }
-        
-        @media (hover: hover) and (pointer: fine) {
-            .card:hover {
-                transform: translateY(-3px);
-            }
-        }
-        
-        @media (prefers-reduced-motion: reduce) {
-            .card, .mode-tab, .periodo-option, .inicial-tab, .btn-calculate, .btn-copy {
-                transition: none !important;
-            }
-            .mode-content {
-                animation: none !important;
-            }
-        }
-        
-        .calculator-container {
-            max-width: 1400px;
-        }
-        
-        .form-label {
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 0.5rem;
-        }
-        
-        .form-control, .form-select {
-            border: 1px solid #ced4da;
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-        }
-        
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(1,100,254,0.25);
-        }
-        
-        .btn-calculate {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            color: white;
-            font-weight: 600;
-            padding: 0.75rem;
-            border-radius: 8px;
-            width: 100%;
-        }
-        
-        .btn-calculate:hover {
-            background-color: var(--secondary-color);
-            transform: translateY(-2px);
-        }
-        
-        .btn-copy {
-            background-color: var(--success-color);
-            color: white;
-            font-weight: 600;
-        }
-        
-        .btn-copy:hover {
-            transform: translateY(-2px);
-        }
-        
-        /* Pestañas personalizadas */
-        .mode-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-            border-bottom: 2px solid #e9ecef;
-            padding-bottom: 0;
-        }
-        
-        .mode-tab {
-            padding: 12px 28px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            cursor: pointer;
-            border-radius: 12px 12px 0 0;
-            transition: all 0.2s ease;
-            background-color: #f1f3f5;
-            color: #495057;
-            margin-right: 5px;
-        }
-        
-        .mode-tab i {
-            margin-right: 8px;
-        }
-        
-        .mode-tab.active {
-            background-color: var(--primary-color);
-            color: white;
-            box-shadow: 0 -3px 8px rgba(0,0,0,0.05);
-        }
-        
-        .mode-tab:not(.active):hover {
-            background-color: #e9ecef;
-            color: var(--primary-color);
-        }
-        
-        .mode-tab:focus-visible,
-        .periodo-option:focus-visible,
-        .inicial-tab:focus-visible {
-            outline: 2px solid var(--primary-color);
-            outline-offset: 2px;
-        }
-        
-        .mode-content {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .mode-content.active-mode {
-            display: block;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px);}
-            to { opacity: 1; transform: translateY(0);}
-        }
-        
-        /* Tablas */
-        .result-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-        }
-        .result-table th {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 0.8rem;
-        }
-        .result-table td {
-            padding: 0.8rem;
-            border-bottom: 1px solid #dee2e6;
-        }
-        .result-table tr.highlight {
-            background-color: rgba(1,100,254,0.08);
-            font-weight: 600;
-        }
-        
-        
-        .copy-textarea {
-            background-color: white;
-            border: 1px solid #dee2e6;
-            border-radius: 12px;
-            padding: 1rem;
-            font-size: 0.9rem;
-            resize: vertical;
-            width: 100%;
-        }
-        
-        .iphone-badge {
-            background: #0164fe10;
-            color: #0164fe;
-            border-radius: 50px;
-            padding: 6px 14px;
-            font-size: 0.8rem;
-        }
-        
-        .interest-badge {
-            background-color: rgba(231,76,60,0.1);
-            color: #c0392b;
-            font-weight: 600;
-            border-radius: 20px;
-            padding: 2px 10px;
-        }
-        
-        .periodo-selector {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 1rem;
-        }
-        .periodo-option {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            border: 2px solid #dee2e6;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .periodo-option.active {
-            border-color: var(--primary-color);
-            background-color: rgba(1,100,254,0.1);
-        }
-        
-        .inicial-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 1rem;
-        }
-        .inicial-tab {
-            flex: 1;
-            text-align: center;
-            padding: 8px;
-            border-radius: 8px;
-            cursor: pointer;
-            background-color: #f8f9fa;
-            transition: all 0.3s ease;
-        }
-        .inicial-tab.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        .toast-notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: var(--success-color);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-            max-width: min(340px, calc(100vw - 2rem));
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-        }
-        .toast-notification.show { opacity: 1; }
-        
-        .footer-actions {
-            margin-top: 0.75rem;
-            font-size: 0.85rem;
-            opacity: 0.85;
-        }
-        .footer-actions button {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.35);
-            color: white;
-            border-radius: 6px;
-            padding: 0.35rem 0.75rem;
-        }
-        .footer-actions button:hover {
-            background: rgba(255,255,255,0.1);
-        }
-        
-        footer {
-            background-color: var(--dark-color);
-            color: white;
-            padding: 1.5rem 0;
-            margin-top: 3rem;
-            text-align: center;
-        }
-        
-        @media (max-width: 768px) {
-            .mode-tab { padding: 8px 16px; font-size: 0.9rem; }
-        }
-        
-        .hidden-field {
-            display: none !important;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora Financiera NPTECH</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial, sans-serif;
+    background:#f5f5f5;
+    padding:15px;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+}
+
+.card{
+    background:white;
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:15px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.08);
+}
+
+h1{
+    font-size:26px;
+    margin-bottom:20px;
+    color:#111;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:15px;
+}
+
+label{
+    display:block;
+    margin-bottom:6px;
+    font-size:14px;
+    font-weight:bold;
+}
+
+input,
+select{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:10px;
+    font-size:15px;
+}
+
+button{
+    width:100%;
+    padding:14px;
+    border:none;
+    background:#111;
+    color:white;
+    border-radius:10px;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:hover{
+    opacity:0.95;
+}
+
+button:active{
+    transform:scale(0.98);
+}
+
+input:focus,
+select:focus{
+    outline:none;
+    border-color:#111;
+    box-shadow:0 0 0 3px rgba(0,0,0,0.08);
+}
+
+.resultado-card{
+    overflow:hidden;
+}
+
+.resultado{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:12px;
+}
+
+.box{
+    background:#fafafa;
+    border:1px solid #eee;
+    border-radius:12px;
+    padding:15px;
+}
+
+.box h3{
+    font-size:13px;
+    color:#666;
+    margin-bottom:8px;
+}
+
+.box p{
+    font-size:18px;
+    font-weight:bold;
+    color:#111;
+    word-break:break-word;
+}
+
+#mensajeCliente{
+    overflow-wrap:break-word;
+    background:#fafafa;
+    border:1px solid #eee;
+    border-radius:12px;
+    padding:18px;
+    line-height:1.8;
+    font-size:15px;
+    white-space:pre-line;
+}
+
+@media(max-width:600px){
+
+    body{
+        padding:10px;
+    }
+
+    .card{
+        padding:15px;
+    }
+
+    h1{
+        font-size:22px;
+    }
+
+    .box p{
+        font-size:16px;
+    }
+
+}
+
+</style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: var(--primary-color);">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="#">
-                <i class="bi bi-calculator-fill me-2"></i>NPTECH - Financiamiento
-            </a>
-        </div>
-    </nav>
-    
-    <div class="container calculator-container py-4">
-        <!-- Pestañas selector de modo -->
-        <div class="mode-tabs" role="tablist" aria-label="Tipo de calculadora">
-            <div class="mode-tab active" role="tab" id="tab-mode-general" data-mode="general" aria-selected="true" aria-controls="general-mode" tabindex="0">
-                <i class="bi bi-layout-three-columns" aria-hidden="true"></i> Modo General
-            </div>
-            <div class="mode-tab" role="tab" id="tab-mode-iphone" data-mode="iphone" aria-selected="false" aria-controls="iphone-mode" tabindex="-1">
-                <i class="bi bi-phone" aria-hidden="true"></i> Modo iPhone <span class="badge bg-primary ms-1">Especial</span>
-            </div>
-        </div>
-        
-        <!-- ========================= MODO GENERAL (ORIGINAL COMPLETO) ========================= -->
-        <div id="general-mode" class="mode-content active-mode" role="tabpanel" aria-labelledby="tab-mode-general" aria-hidden="false">
-            <div class="row g-4">
-                <div class="col-lg-5">
-                    <div class="card h-100">
-                        <div class="card-body p-4">
-                            <h3 class="card-title"><i class="bi bi-sliders2 me-2"></i>Parámetros Generales</h3>
-                            
-                            <div class="mb-4">
-                                <label class="form-label">Período de Pago</label>
-                                <div class="periodo-selector" role="group" aria-label="Período de pago">
-                                    <div class="periodo-option active" id="general-quincenal-opt" role="button" tabindex="0" aria-pressed="true" aria-label="Pago quincenal">
-                                        <i class="bi bi-calendar-week" aria-hidden="true"></i> Quincenal
-                                    </div>
-                                    <div class="periodo-option" id="general-mensual-opt" role="button" tabindex="0" aria-pressed="false" aria-label="Pago mensual">
-                                        <i class="bi bi-calendar-month" aria-hidden="true"></i> Mensual
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label" for="g-precio">Precio del Producto (RD$)</label>
-                                <input type="number" id="g-precio" class="form-control" value="5000" step="0.01" min="0" inputmode="decimal">
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label">Tipo de Pago Inicial</label>
-                                <div class="inicial-tabs" role="group" aria-label="Tipo de pago inicial">
-                                    <div class="inicial-tab active" data-tipo="porcentaje" role="button" tabindex="0" aria-pressed="true">
-                                        <i class="bi bi-percent" aria-hidden="true"></i> Porcentaje
-                                    </div>
-                                    <div class="inicial-tab" data-tipo="monto" role="button" tabindex="0" aria-pressed="false">
-                                        <i class="bi bi-cash-stack" aria-hidden="true"></i> Monto Fijo
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-3" id="g-porcentaje-field">
-                                <label class="form-label" for="g-porcentaje">Porcentaje de Pago Inicial (%)</label>
-                                <input type="number" id="g-porcentaje" class="form-control" value="40" step="0.01" min="0" inputmode="decimal">
-                            </div>
-                            
-                            <div class="mb-3 hidden-field" id="g-monto-field">
-                                <label class="form-label" for="g-monto">Monto de Pago Inicial (RD$)</label>
-                                <input type="number" id="g-monto" class="form-control" value="2000" step="0.01" min="0" inputmode="decimal">
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label" id="g-cuotas-label" for="g-cuotas">Número de Cuotas Quincenales</label>
-                                <select id="g-cuotas" class="form-select"></select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" id="g-tasa-label" for="g-tasa">Tasa de Interés Quincenal (%)</label>
-                                <input type="number" id="g-tasa" class="form-control" value="15" step="0.01" min="0" inputmode="decimal">
-                            </div>
-                            <button type="button" id="g-calcular" class="btn btn-calculate">Recalcular</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-lg-7">
-                    <div class="card">
-                        <div class="card-body p-4">
-                            <h4>Resultados del Financiamiento</h4>
-                            <div class="table-responsive">
-                                <table class="result-table table">
-                                    <tbody id="g-resultados-body"></tbody>
-                                </table>
-                            </div>
-                            
-                            <div class="copy-section">
-                                <label class="form-label">Mensaje para el Cliente</label>
-                                <textarea id="g-texto-cliente" class="copy-textarea mb-2" rows="3" readonly></textarea>
-                                <div class="d-flex gap-2">
-                                    <button type="button" id="g-copiar" class="btn btn-copy"><i class="bi bi-clipboard"></i> Copiar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- ========================= MODO IPHONE (PARÁMETROS AJUSTABLES) ========================= -->
-        <div id="iphone-mode" class="mode-content" role="tabpanel" aria-labelledby="tab-mode-iphone" aria-hidden="true">
-            <div class="row g-4">
-                <div class="col-lg-5">
-                    <div class="card h-100 border-primary">
-                        <div class="card-body p-4">
-                            <div class="d-flex align-items-center mb-3">
-                                <i class="bi bi-apple fs-3 me-2" style="color:#0164fe;"></i>
-                                <span class="iphone-badge fw-bold">Parámetros Ajustables</span>
-                            </div>
-                            <h4><i class="bi bi-phone"></i> Financiamiento iPhone</h4>
-                            <div class="mb-3">
-                                <label class="form-label" for="iphone-precio">Precio del iPhone (RD$)</label>
-                                <input type="number" id="iphone-precio" class="form-control" value="15000" step="0.01" min="0" inputmode="decimal">
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label" for="iphone-inicial-porc">Pago Inicial (%)</label>
-                                <div class="input-group">
-                                    <input type="number" id="iphone-inicial-porc" class="form-control" value="40" step="1" min="0" max="100" inputmode="numeric">
-                                    <span class="input-group-text">%</span>
-                                </div>
-                                <div class="form-text">Porcentaje del precio que pagará al inicio</div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label" for="iphone-tasa">Tasa de Interés Quincenal (%)</label>
-                                <div class="input-group">
-                                    <input type="number" id="iphone-tasa" class="form-control" value="12" step="0.5" min="0" inputmode="decimal">
-                                    <span class="input-group-text">%</span>
-                                </div>
-                                <div class="form-text">Interés aplicado cada quincena</div>
-                            </div>
-                            
-                            <div class="mt-3 p-2 bg-light rounded">
-                                <div><strong>💰 Pago Inicial:</strong> <span id="iphone-inicial-mostrar">RD$0.00</span></div>
-                                <div><strong>📊 Monto a Financiar:</strong> <span id="iphone-monto-financiar">RD$0.00</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-7">
-                    <div class="card">
-                        <div class="card-body p-4">
-                            <h4><i class="bi bi-table"></i> Comparativa de Cuotas (4, 6, 8, 10 quincenas)</h4>
-                            <div class="table-responsive mb-4">
-                                <table class="table table-bordered text-center">
-                                    <thead class="table-primary">
-                                        <tr>
-                                            <th>Plazo</th>
-                                            <th>Cuota Quincenal</th>
-                                            <th>Total a Pagar</th>
-                                            <th>Interés Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="iphone-tabla-plazos"></tbody>
-                                </table>
-                            </div>
-                            
-                            <div class="copy-section-special bg-light p-3 rounded">
-                                <h6><i class="bi bi-chat-dots"></i> Mensaje para Cliente</h6>
-                                <textarea id="iphone-texto-cliente" class="copy-textarea mb-2" rows="5" readonly></textarea>
-                                <div class="d-flex gap-2">
-                                    <button type="button" id="iphone-copiar" class="btn btn-copy"><i class="bi bi-clipboard"></i> Copiar Mensaje</button>
-                                </div>
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <footer>
-        <div class="container">© 2026 NPTECH - Calculadora General + Módulo iPhone Especial</div>
-        <div class="footer-actions"><button type="button" id="btn-borrar-guardado">Borrar datos guardados en este equipo</button></div>
-    </footer>
-    <div class="toast-notification" id="toast" role="status" aria-live="polite"><span id="toast-msg">Copiado</span></div>
 
-    <script>
-        // ---------------------- UTILS GLOBALES --------------------------
-        const toastDiv = document.getElementById('toast');
-        const toastMsgSpan = document.getElementById('toast-msg');
-        let toastTimeout;
-        function mostrarToast(mensaje) {
-            toastMsgSpan.innerText = mensaje;
-            toastDiv.classList.add('show');
-            if(toastTimeout) clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => toastDiv.classList.remove('show'), 2500);
-        }
-        function formatoMoneda(valor) { return new Intl.NumberFormat('es-DO', {style:'currency', currency:'DOP'}).format(valor); }
-        
-        async function copiarAlPortapapeles(texto) {
-            try {
-                if (navigator.clipboard && window.isSecureContext) {
-                    await navigator.clipboard.writeText(texto);
-                    return true;
-                }
-            } catch (e) { /* fallback below */ }
-            try {
-                const ta = document.createElement('textarea');
-                ta.value = texto;
-                ta.setAttribute('aria-hidden', 'true');
-                ta.style.position = 'fixed';
-                ta.style.left = '-9999px';
-                document.body.appendChild(ta);
-                ta.select();
-                const ok = document.execCommand('copy');
-                document.body.removeChild(ta);
-                return ok;
-            } catch (e) {
-                return false;
-            }
-        }
-        
-        const STORAGE_KEY = 'nptech-fin-calc-v1';
-        let persistTimer;
-        function debouncedPersist() {
-            if (persistTimer) clearTimeout(persistTimer);
-            persistTimer = setTimeout(persistState, 350);
-        }
-        function persistState() {
-            try {
-                const data = {
-                    activeMode: document.querySelector('.mode-tab.active')?.getAttribute('data-mode') || 'general',
-                    general: {
-                        periodo: document.getElementById('general-quincenal-opt').classList.contains('active') ? 'quincenal' : 'mensual',
-                        tipoInicial: document.querySelector('#general-mode .inicial-tab.active')?.getAttribute('data-tipo') || 'porcentaje',
-                        precio: document.getElementById('g-precio')?.value ?? '',
-                        porcentaje: document.getElementById('g-porcentaje')?.value ?? '',
-                        monto: document.getElementById('g-monto')?.value ?? '',
-                        cuotas: document.getElementById('g-cuotas')?.value ?? '',
-                        tasa: document.getElementById('g-tasa')?.value ?? '',
-                    },
-                    iphone: {
-                        precio: document.getElementById('iphone-precio')?.value ?? '',
-                        inicialPorc: document.getElementById('iphone-inicial-porc')?.value ?? '',
-                        tasa: document.getElementById('iphone-tasa')?.value ?? '',
-                    },
-                };
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-            } catch (e) { /* ignore quota / private mode */ }
-        }
-        function restoreState() {
-            try {
-                const raw = localStorage.getItem(STORAGE_KEY);
-                if (!raw) return null;
-                return JSON.parse(raw);
-            } catch (e) { return null; }
-        }
-        function applyShellFromState(s) {
-            if (!s) return;
-            const wantIphone = s.activeMode === 'iphone';
-            document.querySelectorAll('.mode-tab').forEach(t => {
-                const isIphone = t.getAttribute('data-mode') === 'iphone';
-                const active = wantIphone ? isIphone : !isIphone;
-                t.classList.toggle('active', active);
-                t.setAttribute('aria-selected', active ? 'true' : 'false');
-                t.setAttribute('tabindex', active ? '0' : '-1');
-            });
-            document.getElementById('general-mode').classList.toggle('active-mode', !wantIphone);
-            document.getElementById('iphone-mode').classList.toggle('active-mode', wantIphone);
-            document.getElementById('general-mode').setAttribute('aria-hidden', wantIphone ? 'true' : 'false');
-            document.getElementById('iphone-mode').setAttribute('aria-hidden', wantIphone ? 'false' : 'true');
-        }
-        const initialState = restoreState();
-        applyShellFromState(initialState);
-        
-        document.getElementById('btn-borrar-guardado').addEventListener('click', () => {
-            if (!confirm('¿Borrar precios y preferencias guardadas en este equipo?')) return;
-            try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* ignore */ }
-            location.reload();
+<div class="container">
+
+    <div class="card">
+
+        <h1>Calculadora Financiera NPTECH</h1>
+
+        <div class="grid">
+
+            <div>
+                <label>Monto del Equipo</label>
+                <input type="number" id="monto" value="5000">
+            </div>
+
+            <div>
+                <label>Inicial (%)</label>
+                <input type="number" id="inicialPorcentaje" value="40">
+            </div>
+
+            <div>
+                <label>Riesgo Cliente</label>
+                <select id="riesgo">
+                    <option value="BAJO">BAJO</option>
+                    <option value="MEDIO" selected>MEDIO</option>
+                    <option value="ALTO">ALTO</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Cantidad de Cuotas</label>
+                <select id="cuotasSeleccionadas">
+                    <option value="todas">Todas</option>
+                    <option value="6" selected>6 Cuotas</option>
+                    <option value="8">8 Cuotas</option>
+                    <option value="10">10 Cuotas</option>
+                    <option value="12">12 Cuotas</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Costo Sistema Bloqueo</label>
+                <input type="number" id="bloqueoCosto" value="0">
+            </div>
+
+        </div>
+
+        <br>
+
+        <button onclick="calcular()">
+            CALCULAR FINANCIAMIENTO
+        </button>
+
+    </div>
+
+    <div class="card resultado-card">
+
+        <div class="resultado">
+
+            <div class="box">
+                <h3>Inicial</h3>
+                <p id="inicialResultado">RD$ 0</p>
+            </div>
+
+            <div class="box">
+                <h3>Financiado</h3>
+                <p id="financiadoResultado">RD$ 0</p>
+            </div>
+
+            <div class="box">
+                <h3>Riesgo Cliente</h3>
+                <p id="riesgoResultado">MEDIO</p>
+            </div>
+
+            <div class="box">
+                <h3>Interés Quincenal</h3>
+                <p id="interesResultado">0%</p>
+            </div>
+
+            <div class="box">
+                <h3>Cuota Seleccionada</h3>
+                <p id="cuotaResultado">RD$ 0</p>
+            </div>
+
+            <div class="box">
+                <h3>Total a Pagar</h3>
+                <p id="totalResultado">RD$ 0</p>
+            </div>
+
+            <div class="box">
+                <h3>Ganancia</h3>
+                <p id="gananciaResultado">RD$ 0</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h2 style="margin-bottom:15px;">Resumen Para Cliente</h2>
+
+        <div id="mensajeCliente"></div>
+
+        <br>
+
+        <button onclick="copiarMensaje()">
+            COPIAR MENSAJE
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+const tasasBase = {
+    6: 12,
+    8: 11,
+    10: 10,
+    12: 9
+};
+
+const ajustesRiesgo = {
+    'BAJO': 0,
+    'MEDIO': 2,
+    'ALTO': 4
+};
+
+function formatear(valor){
+
+    return Number(valor).toLocaleString('es-DO', {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+    });
+}
+
+function calcular(){
+
+    const monto = parseFloat(document.getElementById('monto').value) || 0;
+
+    const inicialPorcentaje = parseFloat(document.getElementById('inicialPorcentaje').value) || 0;
+
+    const riesgo = document.getElementById('riesgo').value;
+
+    const bloqueoCosto = parseFloat(document.getElementById('bloqueoCosto').value) || 0;
+
+    const cuotasSeleccionadas = document.getElementById('cuotasSeleccionadas').value;
+
+    let cuotasDisponibles = [6,8,10,12];
+
+    if(cuotasSeleccionadas !== 'todas'){
+        cuotasDisponibles = [parseInt(cuotasSeleccionadas)];
+    }
+
+    const cuotasCliente = [6,8,10,12];
+
+    const inicial = monto * (inicialPorcentaje / 100);
+
+    const financiadoBase = monto - inicial;
+
+    const financiado = financiadoBase + bloqueoCosto;
+
+    // Ajuste adicional para montos pequeños
+    let ajusteMontoPequeno = 0;
+
+    if(financiado <= 5000){
+        ajusteMontoPequeno = 0.5;
+    }
+    else if(financiado <= 10000){
+        ajusteMontoPequeno = 0;
+    }
+    else if(financiado <= 15000){
+        ajusteMontoPequeno = 0;
+    }
+    else{
+        ajusteMontoPequeno = 0;
+    }
+
+    const resultadosCuotas = [];
+
+    const resultadosCliente = [];
+
+    cuotasDisponibles.forEach(cuotas => {
+
+        const tasaBase = tasasBase[cuotas];
+
+        const ajuste = ajustesRiesgo[riesgo] || 0;
+
+        const tasaQuincenal = tasaBase + ajuste + ajusteMontoPequeno;
+
+        const tasaDecimal = tasaQuincenal / 100;
+
+        const cuota = financiado * (
+            tasaDecimal * Math.pow(1 + tasaDecimal, cuotas)
+        ) / (
+            Math.pow(1 + tasaDecimal, cuotas) - 1
+        );
+
+        const totalPagado = cuota * cuotas;
+
+        resultadosCuotas.push({
+            cuotas,
+            cuota,
+            totalPagado,
+            tasaQuincenal
         });
-        
-        document.querySelector('.mode-tabs').addEventListener('keydown', (e) => {
-            if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-            e.preventDefault();
-            const tabs = [...document.querySelectorAll('.mode-tab')];
-            const i = tabs.findIndex(t => t.getAttribute('aria-selected') === 'true');
-            let next = e.key === 'ArrowRight' ? i + 1 : i - 1;
-            if (next < 0) next = tabs.length - 1;
-            if (next >= tabs.length) next = 0;
-            tabs[next].click();
-            tabs[next].focus();
+
+    });
+
+    cuotasCliente.forEach(cuotas => {
+
+        const tasaBase = tasasBase[cuotas];
+
+        const ajuste = ajustesRiesgo[riesgo] || 0;
+
+        const tasaQuincenal = tasaBase + ajuste + ajusteMontoPequeno;
+
+        const tasaDecimal = tasaQuincenal / 100;
+
+        const cuota = financiado * (
+            tasaDecimal * Math.pow(1 + tasaDecimal, cuotas)
+        ) / (
+            Math.pow(1 + tasaDecimal, cuotas) - 1
+        );
+
+        const totalPagado = cuota * cuotas;
+
+        resultadosCliente.push({
+            cuotas,
+            cuota,
+            totalPagado
         });
-        
-        // ========================= 1. MODO GENERAL =========================
-        (function() {
-            let periodoGeneral = 'quincenal';
-            let tipoInicial = 'porcentaje';
-            
-            function syncPeriodoUI() {
-                const q = document.getElementById('general-quincenal-opt');
-                const m = document.getElementById('general-mensual-opt');
-                if (periodoGeneral === 'quincenal') {
-                    q.classList.add('active');
-                    m.classList.remove('active');
-                    q.setAttribute('aria-pressed', 'true');
-                    m.setAttribute('aria-pressed', 'false');
-                } else {
-                    m.classList.add('active');
-                    q.classList.remove('active');
-                    m.setAttribute('aria-pressed', 'true');
-                    q.setAttribute('aria-pressed', 'false');
-                }
-            }
-            function syncInicialUI() {
-                document.querySelectorAll('.inicial-tab').forEach(t => {
-                    const on = t.getAttribute('data-tipo') === tipoInicial;
-                    t.classList.toggle('active', on);
-                    t.setAttribute('aria-pressed', on ? 'true' : 'false');
-                });
-                document.getElementById('g-porcentaje-field').classList.toggle('hidden-field', tipoInicial !== 'porcentaje');
-                document.getElementById('g-monto-field').classList.toggle('hidden-field', tipoInicial !== 'monto');
-            }
-            
-            if (initialState && initialState.general) {
-                const g = initialState.general;
-                if (g.periodo === 'quincenal' || g.periodo === 'mensual') periodoGeneral = g.periodo;
-                if (g.tipoInicial === 'porcentaje' || g.tipoInicial === 'monto') tipoInicial = g.tipoInicial;
-                syncPeriodoUI();
-                syncInicialUI();
-                if (g.precio != null) document.getElementById('g-precio').value = g.precio;
-                if (g.porcentaje != null) document.getElementById('g-porcentaje').value = g.porcentaje;
-                if (g.monto != null) document.getElementById('g-monto').value = g.monto;
-                if (g.tasa != null) document.getElementById('g-tasa').value = g.tasa;
-            }
-            const precioG = document.getElementById('g-precio');
-            const porcentajeG = document.getElementById('g-porcentaje');
-            const montoG = document.getElementById('g-monto');
-            const cuotasG = document.getElementById('g-cuotas');
-            const tasaG = document.getElementById('g-tasa');
-            
-            function actualizarOpcionesCuotasGeneral() {
-                const esQuincenal = periodoGeneral === 'quincenal';
-                cuotasG.innerHTML = '';
-                let opciones = esQuincenal ? [1,2,3,4,5,6,7,8,10,12,18,24] : [1,2,3,4,5,6,7,8,9,10,11,12];
-                opciones.forEach(val => {
-                    const opt = document.createElement('option');
-                    opt.value = val;
-                    opt.textContent = esQuincenal ? `${val} quincena${val!==1?'s':''}` : `${val} mes${val!==1?'es':''}`;
-                    if((esQuincenal && val===6) || (!esQuincenal && val===3)) opt.selected = true;
-                    cuotasG.appendChild(opt);
-                });
-            }
-            
-            function actualizarEtiquetasGeneral() {
-                const isQ = periodoGeneral === 'quincenal';
-                document.getElementById('g-cuotas-label').innerText = `Número de Cuotas ${isQ ? 'Quincenales' : 'Mensuales'}`;
-                document.getElementById('g-tasa-label').innerHTML = `Tasa de Interés ${isQ ? 'Quincenal' : 'Mensual'} (%)`;
-            }
-            
-            function obtenerPagoInicial(precio) {
-                if(tipoInicial === 'porcentaje') return precio * (parseFloat(porcentajeG.value||0)/100);
-                else return parseFloat(montoG.value||0);
-            }
-            
-            function calcularGeneral() {
-                const precio = parseFloat(precioG.value) || 0;
-                const cuotas = parseInt(cuotasG.value) || 1;
-                const tasaPorc = parseFloat(tasaG.value) || 0;
-                const pagoInicial = obtenerPagoInicial(precio);
-                
-                if (precio <= 0) {
-                    document.getElementById('g-resultados-body').innerHTML = '<tr><td colspan="2" class="text-center text-muted py-4">Indica el precio del producto para ver los resultados.</td></tr>';
-                    document.getElementById('g-texto-cliente').value = '';
-                    return;
-                }
-                
-                const inicialExcede = pagoInicial > precio + 0.01;
-                const montoFinanciar = Math.max(0, precio - pagoInicial);
-                const tasaDec = tasaPorc / 100;
-                let cuotaValor = 0;
-                if(tasaDec > 0 && montoFinanciar>0 && cuotas>0) {
-                    const factor = Math.pow(1+tasaDec, cuotas);
-                    cuotaValor = montoFinanciar * (tasaDec * factor) / (factor - 1);
-                } else if(montoFinanciar>0) cuotaValor = montoFinanciar/cuotas;
-                const totalCuotas = cuotaValor * cuotas;
-                const intereses = totalCuotas - montoFinanciar;
-                const totalPagar = pagoInicial + totalCuotas;
-                const periodo = periodoGeneral === 'quincenal' ? 'quincenas' : 'meses';
-                
-                const filaAviso = inicialExcede
-                    ? `<tr class="table-warning"><td colspan="2" class="text-center small">El pago inicial es mayor que el precio: revisa el porcentaje o el monto fijo.</td></tr>`
-                    : '';
-                document.getElementById('g-resultados-body').innerHTML = filaAviso + `
-                    <tr><td>Precio</td><td class="text-end">${formatoMoneda(precio)}</td></tr>
-                    <tr><td>Pago Inicial</td><td class="text-end">${formatoMoneda(pagoInicial)}</td></tr>
-                    <tr><td>Monto a Financiar</td><td class="text-end">${formatoMoneda(montoFinanciar)}</td></tr>
-                    <tr><td>${cuotas} ${periodo} de</td><td class="text-end">${formatoMoneda(cuotaValor)}</td></tr>
-                    <tr><td>Intereses (${tasaPorc}% por ${periodo.slice(0,-1)})</td><td class="text-end">${formatoMoneda(intereses)}</td></tr>
-                    <tr class="highlight"><td><strong>Total a Pagar</strong></td><td class="text-end"><strong>${formatoMoneda(totalPagar)}</strong></td></tr>
-                `;
-                const periodoCliente = periodoGeneral === 'quincenal' ? 'quincenales' : 'mensuales';
-                const textoCliente = inicialExcede ? '' : (
-                    `📋 *DETALLE DE FINANCIAMIENTO*\n` +
-                    `──────────────\n` +
-                    `💵 *Inicial:* ${formatoMoneda(pagoInicial)}\n` +
-                    `──────────────\n` +
-                    `📅 *${cuotas} cuotas ${periodoCliente}* de ${formatoMoneda(cuotaValor)}\n` +
-                    `──────────────\n` +
-                    `✅ *Total a pagar: ${formatoMoneda(totalPagar)}*\n` +
-                    `_(incluye inicial + cuotas)_`
-                );
-                document.getElementById('g-texto-cliente').value = textoCliente;
-            }
-            
-            function irQuincenal() {
-                periodoGeneral='quincenal'; syncPeriodoUI(); actualizarOpcionesCuotasGeneral(); actualizarEtiquetasGeneral(); calcularGeneral(); debouncedPersist();
-            }
-            function irMensual() {
-                periodoGeneral='mensual'; syncPeriodoUI(); actualizarOpcionesCuotasGeneral(); actualizarEtiquetasGeneral(); calcularGeneral(); debouncedPersist();
-            }
-            document.getElementById('general-quincenal-opt').addEventListener('click', irQuincenal);
-            document.getElementById('general-quincenal-opt').addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); irQuincenal(); }
-            });
-            document.getElementById('general-mensual-opt').addEventListener('click', irMensual);
-            document.getElementById('general-mensual-opt').addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); irMensual(); }
-            });
-            
-            document.querySelectorAll('.inicial-tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    tipoInicial = this.getAttribute('data-tipo');
-                    syncInicialUI();
-                    calcularGeneral();
-                    debouncedPersist();
-                });
-                tab.addEventListener('keydown', function(e) {
-                    if (e.key !== 'Enter' && e.key !== ' ') return;
-                    e.preventDefault();
-                    tipoInicial = this.getAttribute('data-tipo');
-                    syncInicialUI();
-                    calcularGeneral();
-                    debouncedPersist();
-                });
-            });
-            
-            function onGeneralFieldInput() {
-                calcularGeneral();
-                debouncedPersist();
-            }
-            [precioG, porcentajeG, montoG, cuotasG, tasaG].forEach(el => el.addEventListener('input', onGeneralFieldInput));
-            document.getElementById('g-calcular').addEventListener('click', () => { calcularGeneral(); debouncedPersist(); });
-            document.getElementById('g-copiar').addEventListener('click', async () => {
-                const t = document.getElementById('g-texto-cliente').value;
-                if (!t) { mostrarToast('No hay mensaje para copiar'); return; }
-                const ok = await copiarAlPortapapeles(t);
-                mostrarToast(ok ? 'Copiado' : 'No se pudo copiar');
-            });
-            
-            actualizarOpcionesCuotasGeneral();
-            if (initialState && initialState.general && initialState.general.cuotas != null) {
-                const v = String(initialState.general.cuotas);
-                if ([...cuotasG.options].some(o => o.value === v)) cuotasG.value = v;
-            }
-            actualizarEtiquetasGeneral();
-            calcularGeneral();
-        })();
-        
-        // ========================= 2. MODO IPHONE (PARÁMETROS AJUSTABLES) =========================
-        (function() {
-            const precioInput = document.getElementById('iphone-precio');
-            const inicialPorcInput = document.getElementById('iphone-inicial-porc');
-            const tasaInput = document.getElementById('iphone-tasa');
-            const tablaBody = document.getElementById('iphone-tabla-plazos');
-            const inicialSpan = document.getElementById('iphone-inicial-mostrar');
-            const montoFinSpan = document.getElementById('iphone-monto-financiar');
-            const textoArea = document.getElementById('iphone-texto-cliente');
-            const PLAZOS = [4, 6, 8, 10];
-            
-            if (initialState && initialState.iphone) {
-                const ip = initialState.iphone;
-                if (ip.precio != null) precioInput.value = ip.precio;
-                if (ip.inicialPorc != null) inicialPorcInput.value = ip.inicialPorc;
-                if (ip.tasa != null) tasaInput.value = ip.tasa;
-            }
-            
-            function calcularIPhone() {
-                let precio = parseFloat(precioInput.value) || 0;
-                let inicialPorc = parseFloat(inicialPorcInput.value) || 0;
-                let tasaPorc = parseFloat(tasaInput.value) || 0;
-                
-                if (precio <= 0) {
-                    inicialSpan.innerText = formatoMoneda(0);
-                    montoFinSpan.innerText = formatoMoneda(0);
-                    tablaBody.innerHTML = '<tr><td colspan="4" class="text-muted">Indica el precio del iPhone para ver los planes.</td></tr>';
-                    textoArea.value = '';
-                    return;
-                }
-                
-                // Limitar porcentaje inicial entre 0 y 100
-                inicialPorc = Math.min(100, Math.max(0, inicialPorc));
-                let pagoInicial = precio * (inicialPorc / 100);
-                let montoFinanciar = Math.max(0, precio - pagoInicial);
-                
-                inicialSpan.innerText = formatoMoneda(pagoInicial);
-                montoFinSpan.innerText = formatoMoneda(montoFinanciar);
-                
-                const tasaDecimal = tasaPorc / 100;
-                let resultados = [];
-                let htmlTabla = '';
-                
-                for(let n of PLAZOS) {
-                    let cuota = 0;
-                    if(montoFinanciar > 0) {
-                        if(tasaDecimal > 0 && n > 0) {
-                            const factor = Math.pow(1 + tasaDecimal, n);
-                            cuota = montoFinanciar * (tasaDecimal * factor) / (factor - 1);
-                        } else {
-                            cuota = montoFinanciar / n;
-                        }
-                    }
-                    const totalCuotas = cuota * n;
-                    const totalConInicial = pagoInicial + totalCuotas;
-                    const intereses = totalCuotas - montoFinanciar;
-                    htmlTabla += `<tr>
-                        <td class="fw-bold">${n} Quincenas</td>
-                        <td>${formatoMoneda(cuota)}</td>
-                        <td class="fw-bold">${formatoMoneda(totalConInicial)}</td>
-                        <td><span class="interest-badge">${formatoMoneda(intereses)}</span></td>
-                    </tr>`;
-                    resultados.push({cuotas:n, cuotaValor:cuota, total:totalCuotas, intereses});
-                }
-                tablaBody.innerHTML = htmlTabla || '<tr><td colspan="4" class="text-muted">Ingrese un precio válido</td></tr>';
-                
-                let mensaje = `📱 *PLANES DE FINANCIAMIENTO*\n`;
-                mensaje += `──────────────\n`;
-                mensaje += `💵 *Pago inicial:* ${formatoMoneda(pagoInicial)}\n`;
-                mensaje += `──────────────\n\n`;
-                for (let r of resultados) {
-                    const totalR = pagoInicial + r.total;
-                    mensaje += `🔹 *Opción ${r.cuotas} quincenas*\n`;
-                    mensaje += `   Cuota: ${formatoMoneda(r.cuotaValor)}\n`;
-                    mensaje += `   Total a pagar: *${formatoMoneda(totalR)}* _(inicial + cuotas)_\n\n`;
-                }
-                mensaje += `──────────────\n`;
-                mensaje += `_Elige el plan que mejor se adapte a ti_ ✅`;
-              
-                textoArea.value = mensaje;
-            }
-            
-            function onIPhoneInput() {
-                calcularIPhone();
-                debouncedPersist();
-            }
-            precioInput.addEventListener('input', onIPhoneInput);
-            inicialPorcInput.addEventListener('input', onIPhoneInput);
-            tasaInput.addEventListener('input', onIPhoneInput);
-            
-            document.getElementById('iphone-copiar').addEventListener('click', async () => {
-                const t = textoArea.value;
-                if (!t) { mostrarToast('No hay mensaje para copiar'); return; }
-                const ok = await copiarAlPortapapeles(t);
-                mostrarToast(ok ? 'Mensaje copiado' : 'No se pudo copiar');
-            });
-            
-            calcularIPhone();
-        })();
-        
-        // Cambio de pestañas
-        const tabs = document.querySelectorAll('.mode-tab');
-        const contents = { general: document.getElementById('general-mode'), iphone: document.getElementById('iphone-mode') };
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const mode = tab.getAttribute('data-mode');
-                tabs.forEach(t => {
-                    t.classList.remove('active');
-                    t.setAttribute('aria-selected', 'false');
-                    t.setAttribute('tabindex', '-1');
-                });
-                tab.classList.add('active');
-                tab.setAttribute('aria-selected', 'true');
-                tab.setAttribute('tabindex', '0');
-                document.querySelectorAll('.mode-content').forEach(c => c.classList.remove('active-mode'));
-                document.getElementById('general-mode').setAttribute('aria-hidden', mode === 'iphone' ? 'true' : 'false');
-                document.getElementById('iphone-mode').setAttribute('aria-hidden', mode === 'general' ? 'true' : 'false');
-                if(mode === 'general') contents.general.classList.add('active-mode');
-                else contents.iphone.classList.add('active-mode');
-                debouncedPersist();
-            });
-        });
-    </script>
+
+    });
+
+    const totalMayor = Math.max(...resultadosCuotas.map(x => x.totalPagado));
+
+    // Total incluyendo inicial
+    const totalConInicial = totalMayor + inicial;
+
+    const resultadoPrincipal = resultadosCuotas[resultadosCuotas.length - 1];
+
+    const tasaPrincipal = resultadoPrincipal.tasaQuincenal;
+
+    const ganancia = totalMayor - financiado;
+
+    document.getElementById('inicialResultado').innerHTML =
+        'RD$ ' + formatear(inicial);
+
+    document.getElementById('financiadoResultado').innerHTML =
+        'RD$ ' + formatear(financiado);
+
+    document.getElementById('riesgoResultado').innerHTML =
+        riesgo;
+
+    document.getElementById('interesResultado').innerHTML =
+        tasaPrincipal.toFixed(2) + '%';
+
+    document.getElementById('cuotaResultado').innerHTML =
+        'RD$ ' + formatear(resultadoPrincipal.cuota);
+
+    document.getElementById('totalResultado').innerHTML =
+        'RD$ ' + formatear(totalConInicial);
+
+    document.getElementById('gananciaResultado').innerHTML =
+        'RD$ ' + formatear(ganancia);
+
+    generarMensajeCliente({
+        monto,
+        inicial,
+        financiado,
+        resultadosCuotas: resultadosCliente
+    });
+}
+
+function generarMensajeCliente(dados){
+
+    const linhasCuotas = dados.resultadosCuotas.map(item => {
+
+        return `📆 ${item.cuotas} Cuotas → RD$ ${formatear(item.cuota)}`;
+
+    }).join('\n');
+
+    const mensagem = `
+📱 FINANCIAMIENTO NPTECH
+
+💰 Equipo: RD$ ${formatear(dados.monto)}
+✅ Inicial: RD$ ${formatear(dados.inicial)}
+📦 Financiamiento: RD$ ${formatear(dados.financiado)}
+
+${linhasCuotas}
+
+    `;
+
+    document.getElementById('mensajeCliente').innerText = mensagem;
+}
+
+function copiarMensaje(){
+
+    const texto = document.getElementById('mensajeCliente').innerText;
+
+    navigator.clipboard.writeText(texto)
+    .then(() => {
+        alert('Mensaje copiado correctamente');
+    })
+    .catch(() => {
+        alert('No se pudo copiar el mensaje');
+    });
+}
+
+calcular();
+
+</script>
+
 </body>
 </html>
