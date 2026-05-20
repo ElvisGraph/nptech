@@ -435,11 +435,9 @@ function generarMensajeCliente(dados){
     }).join('\n');
 
     const mensagem = `
-📱 FINANCIAMIENTO NPTECH
+📱 RESUMEN FINANCIAMIENTO
 
-💰 Equipo: RD$ ${formatear(dados.monto)}
 ✅ Inicial: RD$ ${formatear(dados.inicial)}
-📦 Financiamiento: RD$ ${formatear(dados.financiado)}
 
 ${linhasCuotas}
 
