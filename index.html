@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora Financiera NPTECH</title>
+<title>Calculadora Financiera COJELO</title>
 
 <style>
 
@@ -171,6 +171,14 @@ select:focus{
             </div>
 
             <div>
+                <label>Tipo de Equipo</label>
+                <select id="tipoEquipo">
+                    <option value="ANDROID" selected>ANDROID</option>
+                    <option value="IPHONE">IPHONE</option>
+                </select>
+            </div>
+
+            <div>
                 <label>Riesgo Cliente</label>
                 <select id="riesgo">
                     <option value="BAJO">BAJO</option>
@@ -197,11 +205,7 @@ select:focus{
 
         </div>
 
-        <br>
-
-        <button onclick="calcular()">
-            CALCULAR FINANCIAMIENTO
-        </button>
+        
 
     </div>
 
@@ -266,6 +270,7 @@ select:focus{
 
 <script>
 
+// Tasas base adaptadas por comportamiento real de financieras de celulares
 const tasasBase = {
     6: 12,
     8: 11,
@@ -295,6 +300,8 @@ function calcular(){
 
     const riesgo = document.getElementById('riesgo').value;
 
+    const tipoEquipo = document.getElementById('tipoEquipo').value;
+
     const bloqueoCosto = parseFloat(document.getElementById('bloqueoCosto').value) || 0;
 
     const cuotasSeleccionadas = document.getElementById('cuotasSeleccionadas').value;
@@ -313,20 +320,35 @@ function calcular(){
 
     const financiado = financiadoBase + bloqueoCosto;
 
-    // Ajuste adicional para montos pequeños
+    // Ajuste dinámico según monto financiado
+    // Montos pequeños = más interés
+    // Montos altos = menos interés
+
     let ajusteMontoPequeno = 0;
 
-    if(financiado <= 5000){
+    if(financiado < 5000){
+        ajusteMontoPequeno = 1.5;
+    }
+    else if(financiado < 10000){
+        ajusteMontoPequeno = 1;
+    }
+    else if(financiado < 15000){
         ajusteMontoPequeno = 0.5;
     }
-    else if(financiado <= 10000){
-        ajusteMontoPequeno = 0;
+    else if(financiado < 20000){
+        ajusteMontoPequeno = -1;
     }
-    else if(financiado <= 15000){
-        ajusteMontoPequeno = 0;
+    else if(financiado < 25000){
+        ajusteMontoPequeno = -1.5;
+    }
+    else if(financiado < 30000){
+        ajusteMontoPequeno = -2;
+    }
+    else if(financiado < 35000){
+        ajusteMontoPequeno = -2.5;
     }
     else{
-        ajusteMontoPequeno = 0;
+        ajusteMontoPequeno = -1.5;
     }
 
     const resultadosCuotas = [];
@@ -339,7 +361,12 @@ function calcular(){
 
         const ajuste = ajustesRiesgo[riesgo] || 0;
 
-        const tasaQuincenal = tasaBase + ajuste + ajusteMontoPequeno;
+        let tasaQuincenal = tasaBase + ajuste + ajusteMontoPequeno;
+
+        // iPhone tiene menor riesgo de recuperación
+        if(tipoEquipo === 'IPHONE'){
+            tasaQuincenal -= 1;
+        }
 
         const tasaDecimal = tasaQuincenal / 100;
 
@@ -366,7 +393,12 @@ function calcular(){
 
         const ajuste = ajustesRiesgo[riesgo] || 0;
 
-        const tasaQuincenal = tasaBase + ajuste + ajusteMontoPequeno;
+        let tasaQuincenal = tasaBase + ajuste + ajusteMontoPequeno;
+
+        // iPhone tiene menor riesgo de recuperación
+        if(tipoEquipo === 'IPHONE'){
+            tasaQuincenal -= 0.5;
+        }
 
         const tasaDecimal = tasaQuincenal / 100;
 
@@ -428,16 +460,16 @@ function calcular(){
 
 function generarMensajeCliente(dados){
 
-    const linhasCuotas = dados.resultadosCuotas.map(item => {
-
-        return `📆 ${item.cuotas} Cuotas → RD$ ${formatear(item.cuota)}`;
+    const linhasCuotas = dados.resultadosCuotas.map(item => {return `📆 ${item.cuotas} Cuotas → RD$ ${formatear(item.cuota)}`;
 
     }).join('\n');
 
     const mensagem = `
-📱 RESUMEN FINANCIAMIENTO
+📱 FINANCIAMIENTO NPTECH
 
 ✅ Inicial: RD$ ${formatear(dados.inicial)}
+
+Cuotas Quincenales
 
 ${linhasCuotas}
 
@@ -452,12 +484,28 @@ function copiarMensaje(){
 
     navigator.clipboard.writeText(texto)
     .then(() => {
-        alert('Mensaje copiado correctamente');
+        // alert('Mensaje copiado correctamente');
     })
     .catch(() => {
         alert('No se pudo copiar el mensaje');
     });
 }
+
+// Recalcular automáticamente al editar campos
+[
+    'monto',
+    'inicialPorcentaje',
+    'tipoEquipo',
+    'riesgo',
+    'cuotasSeleccionadas',
+    'bloqueoCosto'
+].forEach(id => {
+
+    document.getElementById(id).addEventListener('input', calcular);
+
+    document.getElementById(id).addEventListener('change', calcular);
+
+});
 
 calcular();
 
