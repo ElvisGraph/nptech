@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora Financiera COJELO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Calculadora Financiera NPTECH | Interés + Inicial Editable</title>
 
 <style>
 
@@ -20,7 +20,7 @@ body{
 }
 
 .container{
-    max-width:900px;
+    max-width:950px;
     margin:auto;
 }
 
@@ -58,6 +58,17 @@ select{
     border:1px solid #ccc;
     border-radius:10px;
     font-size:15px;
+    transition:0.2s;
+}
+
+/* estilo especial para campos editables manualmente */
+.input-editable{
+    background:#fffef7;
+    border-left:3px solid #111;
+}
+.input-editable:focus{
+    border-color:#111;
+    box-shadow:0 0 0 3px rgba(0,0,0,0.08);
 }
 
 button{
@@ -70,10 +81,11 @@ button{
     font-size:15px;
     font-weight:bold;
     cursor:pointer;
+    transition:0.1s;
 }
 
 button:hover{
-    opacity:0.95;
+    opacity:0.92;
 }
 
 button:active{
@@ -93,7 +105,7 @@ select:focus{
 
 .resultado{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
     gap:12px;
 }
 
@@ -126,6 +138,27 @@ select:focus{
     line-height:1.8;
     font-size:15px;
     white-space:pre-line;
+    font-family:monospace;
+}
+
+.nota-editable{
+    font-size:12px;
+    color:#666;
+    margin-top:8px;
+    background:#f0f0f0;
+    display:inline-block;
+    padding:4px 10px;
+    border-radius:20px;
+}
+
+.badge-manual{
+    background:#111;
+    color:white;
+    font-size:10px;
+    border-radius:30px;
+    padding:2px 8px;
+    margin-left:6px;
+    vertical-align:middle;
 }
 
 @media(max-width:600px){
@@ -156,22 +189,32 @@ select:focus{
 
     <div class="card">
 
-        <h1>Calculadora Financiera NPTECH</h1>
+        <h1>📱 Calculadora Financiera NPTECH</h1>
+        <p style="margin-bottom:18px; font-size:14px; color:#444;">✔️ <strong>Inicial y Tasa editable</strong> | Ajustes automáticos + control manual</p>
 
         <div class="grid">
 
             <div>
-                <label>Monto del Equipo</label>
-                <input type="number" id="monto" value="5000">
+                <label>💰 Monto del Equipo (RD$)</label>
+                <input type="number" id="monto" value="5000" step="100">
+            </div>
+
+            <!-- INICIAL: % (automático) + campo manual alternativo -->
+            <div>
+                <label>🏦 Inicial (%) <span style="font-weight:normal;">(referencia)</span></label>
+                <input type="number" id="inicialPorcentaje" value="40" step="1" min="0" max="90">
+                <small style="font-size:11px;">% sobre el monto</small>
+            </div>
+
+            <!-- NUEVO: Inicial Manual en RD$ (independiente) -->
+            <div>
+                <label>✏️ Inicial Manual (RD$) <span class="badge-manual">editable</span></label>
+                <input type="number" id="inicialManualMonto" value="" step="100" placeholder="Ej: 2500" class="input-editable">
+                <small style="font-size:11px;">Vacío = usa el % de arriba</small>
             </div>
 
             <div>
-                <label>Inicial (%)</label>
-                <input type="number" id="inicialPorcentaje" value="40">
-            </div>
-
-            <div>
-                <label>Tipo de Equipo</label>
+                <label>📱 Tipo de Equipo</label>
                 <select id="tipoEquipo">
                     <option value="ANDROID" selected>ANDROID</option>
                     <option value="IPHONE">IPHONE</option>
@@ -179,7 +222,7 @@ select:focus{
             </div>
 
             <div>
-                <label>Riesgo Cliente</label>
+                <label>⚠️ Riesgo Cliente</label>
                 <select id="riesgo">
                     <option value="BAJO">BAJO</option>
                     <option value="MEDIO" selected>MEDIO</option>
@@ -188,9 +231,9 @@ select:focus{
             </div>
 
             <div>
-                <label>Cantidad de Cuotas</label>
+                <label>📆 Cantidad de Cuotas</label>
                 <select id="cuotasSeleccionadas">
-                    <option value="todas">Todas</option>
+                    <option value="todas">Todas (6,8,10,12)</option>
                     <option value="6" selected>6 Cuotas</option>
                     <option value="8">8 Cuotas</option>
                     <option value="10">10 Cuotas</option>
@@ -199,13 +242,23 @@ select:focus{
             </div>
 
             <div>
-                <label>Costo Sistema Bloqueo</label>
-                <input type="number" id="bloqueoCosto" value="0">
+                <label>🔧 Costo Sistema Bloqueo (RD$)</label>
+                <input type="number" id="bloqueoCosto" value="0" step="100">
+            </div>
+
+            <!-- CAMPO INTERÉS MANUAL -->
+            <div>
+                <label>✏️ Interés Quincenal (%) <span class="badge-manual">editable</span></label>
+                <input type="number" id="interesManual" value="" step="0.5" placeholder="Automático" class="input-editable">
+                <small style="font-size:11px;">Vacío = cálculo automático</small>
             </div>
 
         </div>
-
         
+        <div style="margin-top:16px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+            <span class="nota-editable">⚡ Si escribes Inicial Manual, anula el % de inicial</span>
+            <span class="nota-editable">📊 Si escribes interés, anula la tasa automática</span>
+        </div>
 
     </div>
 
@@ -214,37 +267,39 @@ select:focus{
         <div class="resultado">
 
             <div class="box">
-                <h3>Inicial</h3>
+                <h3>💰 Inicial Aplicada</h3>
                 <p id="inicialResultado">RD$ 0</p>
+                <small id="inicialOrigen" style="color:#666;">(modo: %)</small>
             </div>
 
             <div class="box">
-                <h3>Financiado</h3>
+                <h3>📉 Financiado</h3>
                 <p id="financiadoResultado">RD$ 0</p>
             </div>
 
             <div class="box">
-                <h3>Riesgo Cliente</h3>
+                <h3>⚠️ Riesgo</h3>
                 <p id="riesgoResultado">MEDIO</p>
             </div>
 
             <div class="box">
-                <h3>Interés Quincenal</h3>
+                <h3>📊 Interés Quincenal</h3>
                 <p id="interesResultado">0%</p>
+                <small id="interesOrigen" style="color:#666;">(modo: auto)</small>
             </div>
 
             <div class="box">
-                <h3>Cuota Seleccionada</h3>
+                <h3>💵 Cuota Seleccionada</h3>
                 <p id="cuotaResultado">RD$ 0</p>
             </div>
 
             <div class="box">
-                <h3>Total a Pagar</h3>
+                <h3>🏁 Total a Pagar</h3>
                 <p id="totalResultado">RD$ 0</p>
             </div>
 
             <div class="box">
-                <h3>Ganancia</h3>
+                <h3>📈 Ganancia</h3>
                 <p id="gananciaResultado">RD$ 0</p>
             </div>
 
@@ -254,14 +309,14 @@ select:focus{
 
     <div class="card">
 
-        <h2 style="margin-bottom:15px;">Resumen Para Cliente</h2>
+        <h2 style="margin-bottom:15px;">📋 Resumen Para Cliente</h2>
 
         <div id="mensajeCliente"></div>
 
         <br>
 
         <button onclick="copiarMensaje()">
-            COPIAR MENSAJE
+            📋 COPIAR MENSAJE
         </button>
 
     </div>
@@ -270,7 +325,8 @@ select:focus{
 
 <script>
 
-// Tasas base adaptadas por comportamiento real de financieras de celulares
+// ======================== CONFIGURACIÓN BASE ==========================
+// Tasas base por cuotas (solo se usan cuando el interés NO es manual)
 const tasasBase = {
     6: 12,
     8: 11,
@@ -284,48 +340,24 @@ const ajustesRiesgo = {
     'ALTO': 4
 };
 
+// Función formatear moneda RD$
 function formatear(valor){
-
+    if(isNaN(valor)) valor = 0;
     return Number(valor).toLocaleString('es-DO', {
         minimumFractionDigits:2,
         maximumFractionDigits:2
     });
 }
 
-function calcular(){
-
-    const monto = parseFloat(document.getElementById('monto').value) || 0;
-
-    const inicialPorcentaje = parseFloat(document.getElementById('inicialPorcentaje').value) || 0;
-
-    const riesgo = document.getElementById('riesgo').value;
-
-    const tipoEquipo = document.getElementById('tipoEquipo').value;
-
-    const bloqueoCosto = parseFloat(document.getElementById('bloqueoCosto').value) || 0;
-
-    const cuotasSeleccionadas = document.getElementById('cuotasSeleccionadas').value;
-
-    let cuotasDisponibles = [6,8,10,12];
-
-    if(cuotasSeleccionadas !== 'todas'){
-        cuotasDisponibles = [parseInt(cuotasSeleccionadas)];
-    }
-
-    const cuotasCliente = [6,8,10,12];
-
-    const inicial = monto * (inicialPorcentaje / 100);
-
-    const financiadoBase = monto - inicial;
-
-    const financiado = financiadoBase + bloqueoCosto;
-
-    // Ajuste dinámico según monto financiado
-    // Montos pequeños = más interés
-    // Montos altos = menos interés
-
+// Obtener interés automático según reglas de negocio (riesgo, monto financiado, tipo equipo, cuotas)
+function obtenerInteresAutomatico(cuotas, financiado, riesgo, tipoEquipo) {
+    let tasaBase = tasasBase[cuotas];
+    if(!tasaBase) tasaBase = 10;
+    
+    let ajuste = ajustesRiesgo[riesgo] || 0;
+    
+    // ajuste dinámico por monto financiado (reglas originales)
     let ajusteMontoPequeno = 0;
-
     if(financiado < 5000){
         ajusteMontoPequeno = 1.5;
     }
@@ -350,164 +382,283 @@ function calcular(){
     else{
         ajusteMontoPequeno = -1.5;
     }
+    
+    let tasaQuincenal = tasaBase + ajuste + ajusteMontoPequeno;
+    
+    // ajuste por tipo equipo (iPhone menor riesgo)
+    if(tipoEquipo === 'IPHONE'){
+        tasaQuincenal -= 1;
+    }
+    
+    tasaQuincenal = Math.round(tasaQuincenal * 100) / 100;
+    if(tasaQuincenal < 2) tasaQuincenal = 2;
+    if(tasaQuincenal > 35) tasaQuincenal = 35;
+    
+    return tasaQuincenal;
+}
 
-    const resultadosCuotas = [];
+// Cálculo de cuota según fórmula de anualidades (interés compuesto)
+function calcularCuota(financiado, tasaPorcentaje, cuotas) {
+    if(financiado <= 0 || cuotas <= 0) return 0;
+    const tasaDecimal = tasaPorcentaje / 100;
+    if(tasaDecimal === 0) return financiado / cuotas;
+    
+    const factor = tasaDecimal * Math.pow(1 + tasaDecimal, cuotas) / (Math.pow(1 + tasaDecimal, cuotas) - 1);
+    return financiado * factor;
+}
 
+// Función principal que maneja INICIAL MANUAL y TASA MANUAL
+function calcular() {
+    
+    // ---------- 1. Leer inputs básicos ----------
+    const monto = parseFloat(document.getElementById('monto').value) || 0;
+    const inicialPorcentaje = parseFloat(document.getElementById('inicialPorcentaje').value) || 0;
+    const inicialManualMonto = document.getElementById('inicialManualMonto').value;
+    const riesgo = document.getElementById('riesgo').value;
+    const tipoEquipo = document.getElementById('tipoEquipo').value;
+    const bloqueoCosto = parseFloat(document.getElementById('bloqueoCosto').value) || 0;
+    const cuotasSeleccionadasModo = document.getElementById('cuotasSeleccionadas').value;
+    
+    // ---------------- INICIAL MANUAL (si el usuario ingreso valor) ----------------
+    let inicial = 0;
+    let modoInicialManual = false;
+    let inicialManualValor = null;
+    
+    if(inicialManualMonto !== null && inicialManualMonto !== undefined && inicialManualMonto.trim() !== "") {
+        let parsedIni = parseFloat(inicialManualMonto);
+        if(!isNaN(parsedIni) && parsedIni >= 0) {
+            modoInicialManual = true;
+            inicialManualValor = parsedIni;
+            inicial = parsedIni;
+        } else {
+            inicial = monto * (inicialPorcentaje / 100);
+        }
+    } else {
+        // sin valor manual: usar porcentaje
+        inicial = monto * (inicialPorcentaje / 100);
+    }
+    
+    // validación: la inicial no puede superar el monto + bloqueo, pero permitimos lógica real
+    const montoTotalReferencia = monto + bloqueoCosto;
+    if(inicial > montoTotalReferencia && montoTotalReferencia > 0) {
+        inicial = montoTotalReferencia; // no puede ser mayor que el valor del equipo + bloqueo
+    }
+    if(inicial < 0) inicial = 0;
+    
+    // financiado base (monto equipo - inicial) + costo bloqueo
+    const financiadoBase = monto - inicial;
+    const financiado = financiadoBase + bloqueoCosto;
+    
+    // ---------- 2. Leer interés manual ----------
+    const interesManualInput = document.getElementById('interesManual').value;
+    let modoManualInteres = false;
+    let interesFijoManual = null;
+    if(interesManualInput !== null && interesManualInput !== undefined && interesManualInput.trim() !== "") {
+        let parsed = parseFloat(interesManualInput);
+        if(!isNaN(parsed) && parsed >= 0) {
+            modoManualInteres = true;
+            interesFijoManual = parsed;
+            if(interesFijoManual > 50) interesFijoManual = 50;
+            if(interesFijoManual < 0) interesFijoManual = 0;
+        }
+    }
+    
+    // Determinar lista de cuotas a mostrar en resultados (según selector)
+    let cuotasMostrar = [];
+    if(cuotasSeleccionadasModo === 'todas') {
+        cuotasMostrar = [6, 8, 10, 12];
+    } else {
+        let cuotaUnica = parseInt(cuotasSeleccionadasModo);
+        if(!isNaN(cuotaUnica) && [6,8,10,12].includes(cuotaUnica)) {
+            cuotasMostrar = [cuotaUnica];
+        } else {
+            cuotasMostrar = [6];
+        }
+    }
+    
+    // Lista completa para el cliente (siempre 6,8,10,12)
+    const cuotasCliente = [6, 8, 10, 12];
+    
+    // ---------- 3. Para cada opción de cuota, calcular cuota (con tasa manual o automática) ----------
+    const resultadosDetalle = [];
+    
+    for(let i=0; i<cuotasMostrar.length; i++) {
+        let cuotas = cuotasMostrar[i];
+        let tasaUsada = 0;
+        if(modoManualInteres && interesFijoManual !== null) {
+            tasaUsada = interesFijoManual;
+        } else {
+            tasaUsada = obtenerInteresAutomatico(cuotas, financiado, riesgo, tipoEquipo);
+        }
+        let cuotaMonto = calcularCuota(financiado, tasaUsada, cuotas);
+        let totalPagado = cuotaMonto * cuotas;
+        resultadosDetalle.push({
+            cuotas: cuotas,
+            cuota: cuotaMonto,
+            totalPagado: totalPagado,
+            tasaInteres: tasaUsada
+        });
+    }
+    
+    // Resultados para cliente (siempre 4 opciones)
     const resultadosCliente = [];
-
-    cuotasDisponibles.forEach(cuotas => {
-
-        const tasaBase = tasasBase[cuotas];
-
-        const ajuste = ajustesRiesgo[riesgo] || 0;
-
-        let tasaQuincenal = tasaBase + ajuste + ajusteMontoPequeno;
-
-        // iPhone tiene menor riesgo de recuperación
-        if(tipoEquipo === 'IPHONE'){
-            tasaQuincenal -= 1;
+    for(let i=0; i<cuotasCliente.length; i++) {
+        let cuotas = cuotasCliente[i];
+        let tasaCliente = 0;
+        if(modoManualInteres && interesFijoManual !== null) {
+            tasaCliente = interesFijoManual;
+        } else {
+            tasaCliente = obtenerInteresAutomatico(cuotas, financiado, riesgo, tipoEquipo);
         }
-
-        const tasaDecimal = tasaQuincenal / 100;
-
-        const cuota = financiado * (
-            tasaDecimal * Math.pow(1 + tasaDecimal, cuotas)
-        ) / (
-            Math.pow(1 + tasaDecimal, cuotas) - 1
-        );
-
-        const totalPagado = cuota * cuotas;
-
-        resultadosCuotas.push({
-            cuotas,
-            cuota,
-            totalPagado,
-            tasaQuincenal
-        });
-
-    });
-
-    cuotasCliente.forEach(cuotas => {
-
-        const tasaBase = tasasBase[cuotas];
-
-        const ajuste = ajustesRiesgo[riesgo] || 0;
-
-        let tasaQuincenal = tasaBase + ajuste + ajusteMontoPequeno;
-
-        // iPhone tiene menor riesgo de recuperación
-        if(tipoEquipo === 'IPHONE'){
-            tasaQuincenal -= 0.5;
-        }
-
-        const tasaDecimal = tasaQuincenal / 100;
-
-        const cuota = financiado * (
-            tasaDecimal * Math.pow(1 + tasaDecimal, cuotas)
-        ) / (
-            Math.pow(1 + tasaDecimal, cuotas) - 1
-        );
-
-        const totalPagado = cuota * cuotas;
-
+        let cuotaValor = calcularCuota(financiado, tasaCliente, cuotas);
         resultadosCliente.push({
-            cuotas,
-            cuota,
-            totalPagado
+            cuotas: cuotas,
+            cuota: cuotaValor,
+            totalPagado: cuotaValor * cuotas,
+            tasa: tasaCliente
         });
-
-    });
-
-    const totalMayor = Math.max(...resultadosCuotas.map(x => x.totalPagado));
-
-    // Total incluyendo inicial
-    const totalConInicial = totalMayor + inicial;
-
-    const resultadoPrincipal = resultadosCuotas[resultadosCuotas.length - 1];
-
-    const tasaPrincipal = resultadoPrincipal.tasaQuincenal;
-
-    const ganancia = totalMayor - financiado;
-
-    document.getElementById('inicialResultado').innerHTML =
-        'RD$ ' + formatear(inicial);
-
-    document.getElementById('financiadoResultado').innerHTML =
-        'RD$ ' + formatear(financiado);
-
-    document.getElementById('riesgoResultado').innerHTML =
-        riesgo;
-
-    document.getElementById('interesResultado').innerHTML =
-        tasaPrincipal.toFixed(2) + '%';
-
-    document.getElementById('cuotaResultado').innerHTML =
-        'RD$ ' + formatear(resultadoPrincipal.cuota);
-
-    document.getElementById('totalResultado').innerHTML =
-        'RD$ ' + formatear(totalConInicial);
-
-    document.getElementById('gananciaResultado').innerHTML =
-        'RD$ ' + formatear(ganancia);
-
+    }
+    
+    // Determinar resultado principal (para mostrar en cajitas)
+    let resultadoPrincipal;
+    if(cuotasSeleccionadasModo !== 'todas') {
+        let cuotaPrincipalNum = parseInt(cuotasSeleccionadasModo);
+        resultadoPrincipal = resultadosDetalle.find(r => r.cuotas === cuotaPrincipalNum);
+        if(!resultadoPrincipal && resultadosDetalle.length > 0) resultadoPrincipal = resultadosDetalle[0];
+    } else {
+        resultadoPrincipal = resultadosDetalle.find(r => r.cuotas === 12);
+        if(!resultadoPrincipal) resultadoPrincipal = resultadosDetalle[resultadosDetalle.length-1];
+    }
+    if(!resultadoPrincipal && resultadosDetalle.length > 0) resultadoPrincipal = resultadosDetalle[0];
+    
+    const totalFinanciadoConInteres = resultadoPrincipal ? resultadoPrincipal.totalPagado : 0;
+    const totalConInicial = inicial + totalFinanciadoConInteres;
+    const ganancia = totalFinanciadoConInteres - financiado;
+    
+    let tasaMostrada = resultadoPrincipal ? resultadoPrincipal.tasaInteres : 0;
+    let cuotaMostrada = resultadoPrincipal ? resultadoPrincipal.cuota : 0;
+    
+    // ---------- 4. Actualizar UI con badges de origen ----------
+    document.getElementById('inicialResultado').innerHTML = 'RD$ ' + formatear(inicial);
+    document.getElementById('financiadoResultado').innerHTML = 'RD$ ' + formatear(financiado);
+    document.getElementById('riesgoResultado').innerHTML = riesgo.charAt(0) + riesgo.slice(1).toLowerCase();
+    document.getElementById('interesResultado').innerHTML = tasaMostrada.toFixed(2) + '%';
+    document.getElementById('cuotaResultado').innerHTML = 'RD$ ' + formatear(cuotaMostrada);
+    document.getElementById('totalResultado').innerHTML = 'RD$ ' + formatear(totalConInicial);
+    document.getElementById('gananciaResultado').innerHTML = 'RD$ ' + formatear(ganancia);
+    
+    // Mostrar origen de inicial
+    const inicialOrigenSpan = document.getElementById('inicialOrigen');
+    if(modoInicialManual && inicialManualValor !== null) {
+        inicialOrigenSpan.innerHTML = '(modo: manual RD$)';
+        inicialOrigenSpan.style.color = "#d9534f";
+    } else {
+        inicialOrigenSpan.innerHTML = `(modo: ${inicialPorcentaje}% del monto)`;
+        inicialOrigenSpan.style.color = "#2c6e2c";
+    }
+    
+    // Mostrar origen de interés
+    const interesOrigenSpan = document.getElementById('interesOrigen');
+    if(modoManualInteres && interesFijoManual !== null) {
+        interesOrigenSpan.innerHTML = '(modo: manual fijo)';
+        interesOrigenSpan.style.color = "#d9534f";
+    } else {
+        interesOrigenSpan.innerHTML = '(modo: automático por riesgo/monto)';
+        interesOrigenSpan.style.color = "#2c6e2c";
+    }
+    
+    // ---------- 5. Generar mensaje para cliente (con indicación de ediciones) ----------
     generarMensajeCliente({
-        monto,
-        inicial,
-        financiado,
-        resultadosCuotas: resultadosCliente
+        inicial: inicial,
+        financiado: financiado,
+        montoEquipo: monto,
+        bloqueo: bloqueoCosto,
+        resultadosCuotas: resultadosCliente,
+        modoManualInteres: modoManualInteres,
+        tasaManual: interesFijoManual,
+        modoInicialManual: modoInicialManual,
+        inicialManualValor: inicialManualValor,
+        inicialPorcentajeUsado: inicialPorcentaje
     });
 }
 
-function generarMensajeCliente(dados){
-
-    const linhasCuotas = dados.resultadosCuotas.map(item => {return `📆 ${item.cuotas} Cuotas → RD$ ${formatear(item.cuota)}`;
-
+// Genera texto formateado para el cliente (incluye notas sobre inicial manual o tasa manual)
+function generarMensajeCliente(datos) {
+    let lineasCuotas = datos.resultadosCuotas.map(item => {
+        return `📆 ${item.cuotas} Cuotas  →  RD$ ${formatear(item.cuota)} (c/quincena)   [Total: RD$ ${formatear(item.totalPagado)}]`;
     }).join('\n');
+    
+    let notaInicial = "";
+    if(datos.modoInicialManual && datos.inicialManualValor !== null) {
+        notaInicial = `🔹 *Inicial fijada manualmente*: RD$ ${formatear(datos.inicialManualValor)} (independiente del %)\n`;
+    } else {
+        notaInicial = `🔹 *Inicial calculada*: ${datos.inicialPorcentajeUsado}% del equipo → RD$ ${formatear(datos.inicial)}\n`;
+    }
+    
+    let notaInteres = "";
+    if(datos.modoManualInteres && datos.tasaManual !== null) {
+        notaInteres = `🔹 *Tasa de interés manual*: ${datos.tasaManual.toFixed(2)}% quincenal (fijada por el asesor)\n`;
+    } else {
+        notaInteres = `🔹 *Tasa de interés dinámica*: calculada según riesgo, monto financiado y tipo de equipo.\n`;
+    }
+    
+    let mensaje = `📱 *FINANCIAMIENTO NPTECH* 
+━━━━━━━━━━━━━━━━━━━━━
+${notaInicial}${notaInteres}
+💰 *Monto equipo:* RD$ ${formatear(datos.montoEquipo)}
+🔧 *Costo bloqueo:* RD$ ${formatear(datos.bloqueo)}
+💵 *Total financiado:* RD$ ${formatear(datos.financiado)}
 
-    const mensagem = `
-📱 FINANCIAMIENTO NPTECH
+📆 *Opciones de pago (cuotas quincenales):*
+${lineasCuotas}
 
-✅ Inicial: RD$ ${formatear(dados.inicial)}
+✅ *Total a pagar (incluye inicial + intereses):* RD$ ${formatear(datos.inicial + (datos.resultadosCuotas[0]?.totalPagado || 0))} (ejemplo con ${datos.resultadosCuotas[0]?.cuotas || 6} cuotas)
 
-Cuotas Quincenales
-
-${linhasCuotas}
-
-    `;
-
-    document.getElementById('mensajeCliente').innerText = mensagem;
+⚠️ Los pagos son estrictamente quincenales. Cotización sujeta a aprobación.`;
+    
+    document.getElementById('mensajeCliente').innerText = mensaje;
 }
 
-function copiarMensaje(){
-
+// Copiar mensaje al portapapeles con feedback
+function copiarMensaje() {
     const texto = document.getElementById('mensajeCliente').innerText;
-
+    if(!texto.trim()) {
+        alert('No hay mensaje para copiar');
+        return;
+    }
     navigator.clipboard.writeText(texto)
     .then(() => {
-        // alert('Mensaje copiado correctamente');
+        let btn = document.querySelector('button[onclick="copiarMensaje()"]');
+        let textoOriginal = btn.innerText;
+        btn.innerText = '✅ ¡Copiado!';
+        setTimeout(() => {
+            btn.innerText = textoOriginal;
+        }, 1500);
     })
     .catch(() => {
-        alert('No se pudo copiar el mensaje');
+        alert('❌ No se pudo copiar el mensaje');
     });
 }
 
-// Recalcular automáticamente al editar campos
-[
-    'monto',
-    'inicialPorcentaje',
-    'tipoEquipo',
-    'riesgo',
-    'cuotasSeleccionadas',
-    'bloqueoCosto'
-].forEach(id => {
-
-    document.getElementById(id).addEventListener('input', calcular);
-
-    document.getElementById(id).addEventListener('change', calcular);
-
+// Vincular eventos a todos los campos relevantes
+const inputsIds = [
+    'monto', 'inicialPorcentaje', 'inicialManualMonto', 'tipoEquipo', 
+    'riesgo', 'cuotasSeleccionadas', 'bloqueoCosto', 'interesManual'
+];
+inputsIds.forEach(id => {
+    const element = document.getElementById(id);
+    if(element) {
+        element.addEventListener('input', () => { calcular(); });
+        element.addEventListener('change', () => { calcular(); });
+    }
 });
 
-calcular();
+// Inicializar valores por defecto
+window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('interesManual').value = '';
+    document.getElementById('inicialManualMonto').value = '';
+    calcular();
+});
 
 </script>
 
