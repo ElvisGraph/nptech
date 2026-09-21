@@ -36,7 +36,7 @@ body{
 }
 
 .container{
-    max-width:950px;
+    max-width:1380px;
     margin:auto;
 }
 
@@ -422,6 +422,141 @@ select:focus{
     font-size:20px;
 }
 
+.output-column{
+    min-width:0;
+}
+
+@media(min-width:850px){
+    body{
+        padding:14px 16px 24px;
+    }
+
+    .hero{
+        padding:18px 24px;
+        margin-bottom:14px;
+    }
+
+    .hero h1{
+        font-size:30px;
+        margin-bottom:5px;
+    }
+
+    .hero .eyebrow{
+        margin-bottom:5px;
+    }
+
+    .dashboard{
+        display:grid;
+        grid-template-columns:minmax(330px,.8fr) minmax(0,1.5fr);
+        gap:16px;
+        align-items:start;
+    }
+
+    .card{
+        padding:18px;
+        margin-bottom:16px;
+        border-radius:16px;
+    }
+
+    .form-card .grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:12px;
+    }
+
+    .form-card label{
+        font-size:13px;
+    }
+
+    .form-card input,
+    .form-card select{
+        min-width:0;
+        padding:10px;
+        font-size:14px;
+    }
+
+    .form-card .section-heading{
+        margin-bottom:12px;
+    }
+
+    .form-card .form-section + .form-section{
+        margin-top:18px;
+        padding-top:18px;
+    }
+
+    .form-card .advanced{
+        margin-top:16px;
+    }
+
+    .form-card .advanced summary{
+        padding:12px 14px;
+    }
+
+    .form-card .advanced-content{
+        padding:14px;
+    }
+
+    .form-card .field-note{
+        margin-top:10px;
+        padding:9px 11px;
+    }
+
+    .results-header,
+    .resultado-principal{
+        margin-bottom:12px;
+    }
+
+    .resultado,
+    .resultado-principal{
+        gap:8px;
+    }
+
+    .box,
+    .box-destacada,
+    .box-total{
+        padding:12px;
+    }
+
+    .box-destacada p,
+    .box-total p{
+        font-size:23px;
+    }
+
+    .table-heading{
+        margin:16px 0 6px;
+    }
+
+    .planes-wrapper{
+        margin-top:8px;
+    }
+
+    .planes th,
+    .planes td{
+        padding:8px 9px;
+        font-size:12px;
+    }
+
+    .whatsapp-card .summary-header{
+        margin-bottom:10px;
+    }
+
+    .whatsapp-card #mensajeCliente{
+        max-height:180px;
+        overflow-y:auto;
+        padding:13px;
+        line-height:1.55;
+        font-size:13px;
+    }
+
+    .whatsapp-card br{
+        display:none;
+    }
+
+    .whatsapp-card button{
+        margin-top:12px;
+        padding:12px;
+    }
+}
+
 @media(max-width:600px){
 
     body{
@@ -469,7 +604,8 @@ select:focus{
         <p>Completa los datos del producto y elige cómo deseas pagar. Los resultados se actualizan automáticamente.</p>
     </header>
 
-    <div class="card">
+    <main class="dashboard">
+    <div class="card form-card">
 
         <section class="form-section">
             <div class="section-heading">
@@ -503,6 +639,21 @@ select:focus{
                         <option value="MEDIO" selected>Medio</option>
                         <option value="ALTO">Alto</option>
                     </select>
+                </div>
+
+                <div id="campoMarcaDispositivo">
+                    <label for="marcaDispositivo">Marca del dispositivo</label>
+                    <select id="marcaDispositivo">
+                        <option value="REDMI" selected>Redmi</option>
+                        <option value="MOTOROLA">Motorola</option>
+                        <option value="SAMSUNG">Samsung</option>
+                        <option value="ITEL">Itel</option>
+                        <option value="INFINIX">Infinix</option>
+                        <option value="TECNO">Tecno</option>
+                        <option value="OUKITEL">Oukitel</option>
+                        <option value="OTRO">Otra marca</option>
+                    </select>
+                    <small>Oukitel y otras marcas agregan 1.5% por mayor riesgo.</small>
                 </div>
             </div>
         </section>
@@ -542,6 +693,8 @@ select:focus{
                     <label for="cuotasSeleccionadas">Plazo del financiamiento</label>
                     <select id="cuotasSeleccionadas">
                         <option value="todas">Comparar todos los plazos</option>
+                        <option value="1">1 mes — 2 cuotas quincenales</option>
+                        <option value="2">2 meses — 4 cuotas quincenales</option>
                         <option value="3" selected>3 meses — 6 cuotas quincenales</option>
                         <option value="4">4 meses — 8 cuotas quincenales</option>
                         <option value="5">5 meses — 10 cuotas quincenales</option>
@@ -550,7 +703,7 @@ select:focus{
                 </div>
             </div>
 
-            <div class="field-note">Los teléfonos se financian hasta 4 meses y los electrodomésticos hasta 6 meses. La cantidad de cuotas cambia según la frecuencia de pago.</div>
+            <div class="field-note">Hay plazos desde 1 mes. Los teléfonos se financian hasta 4 meses y los electrodomésticos hasta 6 meses. La cantidad de cuotas cambia según la frecuencia de pago.</div>
         </section>
 
         <details class="advanced">
@@ -574,6 +727,7 @@ select:focus{
 
     </div>
 
+    <div class="output-column">
     <div class="card resultado-card">
 
         <div class="results-header">
@@ -645,7 +799,7 @@ select:focus{
 
     </div>
 
-    <div class="card">
+    <div class="card whatsapp-card">
 
         <div class="summary-header">
             <h2>Mensaje listo para WhatsApp</h2>
@@ -662,6 +816,9 @@ select:focus{
 
     </div>
 
+    </div>
+    </main>
+
 </div>
 
 <script>
@@ -669,6 +826,8 @@ select:focus{
 // ======================== CONFIGURACIÓN BASE ==========================
 // Tasas base por cuotas (solo se usan cuando el interés NO es manual)
 const tasasBase = {
+    2: 10,
+    4: 9.5,
     6: 9,
     8: 8.5,
     10: 8,
@@ -679,6 +838,28 @@ const ajustesRiesgo = {
     'BAJO': 0,
     'MEDIO': 2,
     'ALTO': 4
+};
+
+const ajustesMarcaDispositivo = {
+    'REDMI': 0,
+    'MOTOROLA': 0,
+    'SAMSUNG': 0,
+    'ITEL': 0,
+    'INFINIX': 0,
+    'TECNO': 0,
+    'OUKITEL': 1.5,
+    'OTRO': 1.5
+};
+
+const nombresMarcaDispositivo = {
+    'REDMI': 'Redmi',
+    'MOTOROLA': 'Motorola',
+    'SAMSUNG': 'Samsung',
+    'ITEL': 'Itel',
+    'INFINIX': 'Infinix',
+    'TECNO': 'Tecno',
+    'OUKITEL': 'Oukitel',
+    'OTRO': 'Otra marca'
 };
 
 const ajustesTipoProducto = {
@@ -700,6 +881,8 @@ const mesesMaximosPorProducto = {
 };
 
 const planesFinanciamiento = [
+    { meses: 1, cuotasQuincenales: 2 },
+    { meses: 2, cuotasQuincenales: 4 },
     { meses: 3, cuotasQuincenales: 6 },
     { meses: 4, cuotasQuincenales: 8 },
     { meses: 5, cuotasQuincenales: 10 },
@@ -745,13 +928,23 @@ function obtenerCantidadCuotas(plan, periodicidad) {
     return plan.meses * configuracionPeriodicidad[periodicidad].periodosPorMes;
 }
 
+function formatearMeses(cantidad) {
+    return cantidad === 1 ? '1 mes' : `${cantidad} meses`;
+}
+
+function formatearCantidadCuotas(cantidad, configPeriodo) {
+    const palabraCuota = cantidad === 1 ? 'cuota' : 'cuotas';
+    const periodo = cantidad === 1 ? configPeriodo.singular : configPeriodo.plural;
+    return `${cantidad} ${palabraCuota} ${periodo}`;
+}
+
 function obtenerPlanesDisponibles(tipoProducto) {
     const mesesMaximos = mesesMaximosPorProducto[tipoProducto] || 4;
     return planesFinanciamiento.filter(plan => plan.meses <= mesesMaximos);
 }
 
-// Obtener interés automático según reglas de negocio (riesgo, monto financiado, tipo equipo, cuotas)
-function obtenerInteresAutomatico(cuotas, financiado, riesgo, tipoEquipo) {
+// Obtener interés automático según plazo, monto, cliente y marca del dispositivo.
+function obtenerInteresAutomatico(cuotas, financiado, riesgo, tipoEquipo, marcaDispositivo) {
     let tasaBase = tasasBase[cuotas];
     if(!tasaBase) tasaBase = 10;
     
@@ -788,6 +981,11 @@ function obtenerInteresAutomatico(cuotas, financiado, riesgo, tipoEquipo) {
     
     // Los productos de menor riesgo reciben una reducción sobre la tasa quincenal.
     tasaQuincenal += ajustesTipoProducto[tipoEquipo] || 0;
+
+    // El ajuste por marca solo aplica a teléfonos Android.
+    if(tipoEquipo === 'ANDROID') {
+        tasaQuincenal += ajustesMarcaDispositivo[marcaDispositivo] || 0;
+    }
     
     tasaQuincenal = Math.round(tasaQuincenal * 100) / 100;
     if(tasaQuincenal < 2) tasaQuincenal = 2;
@@ -819,6 +1017,7 @@ function calcular() {
     const inicialManualInput = document.getElementById('inicialManualMonto').value.trim();
     const interesManualInput = document.getElementById('interesManual').value.trim();
     const riesgo = document.getElementById('riesgo').value;
+    const marcaDispositivo = document.getElementById('marcaDispositivo').value;
     const tipoEquipo = document.getElementById('tipoEquipo').value;
     const bloqueoCosto = leerNumeroNoNegativo('bloqueoCosto');
     const periodicidad = document.getElementById('periodicidad').value;
@@ -860,7 +1059,8 @@ function calcular() {
                 plan.cuotasQuincenales,
                 capitalEquipoFinanciado,
                 riesgo,
-                tipoEquipo
+                tipoEquipo,
+                marcaDispositivo
             );
         const tasaPeriodo = convertirTasaQuincenal(tasaQuincenal, periodicidad);
         const cuotas = obtenerCantidadCuotas(plan, periodicidad);
@@ -907,6 +1107,7 @@ function calcular() {
         modoInicialManual,
         riesgo,
         tipoEquipo,
+        marcaDispositivo,
         periodicidad,
         configPeriodo,
         bloqueoCosto,
@@ -933,7 +1134,7 @@ function actualizarResultados(datos) {
         `Interés ${datos.configPeriodo.singular}`;
     document.getElementById('cuotaResultado').textContent = `RD$ ${formatear(principal.cuota)}`;
     document.getElementById('cuotaDetalle').textContent =
-        `${principal.cuotas} cuotas ${datos.configPeriodo.plural} · ${principal.meses} meses`;
+        `${formatearCantidadCuotas(principal.cuotas, datos.configPeriodo)} · ${formatearMeses(principal.meses)}`;
     document.getElementById('totalResultado').textContent =
         `RD$ ${formatear(principal.totalConInicial)}`;
     document.getElementById('gananciaResultado').textContent =
@@ -972,7 +1173,7 @@ function renderizarTablaPlanes(datos) {
         if(seleccionado) fila.classList.add('seleccionado');
 
         const valores = [
-            `${resultado.meses} meses · ${resultado.cuotas} cuotas`,
+            `${formatearMeses(resultado.meses)} · ${resultado.cuotas} ${resultado.cuotas === 1 ? 'cuota' : 'cuotas'}`,
             `${resultado.tasaPeriodo.toFixed(2)}%`,
             `RD$ ${formatear(resultado.cuota)}`,
             `RD$ ${formatear(resultado.totalCuotas)}`,
@@ -991,17 +1192,21 @@ function renderizarTablaPlanes(datos) {
 // Mensaje breve para WhatsApp: muestra solo lo necesario para tomar una decisión.
 function generarMensajeCliente(datos) {
     const lineasCuotas = datos.resultados.map(item => {
-        return `• *${item.meses} meses:* ${item.cuotas} pagos de *RD$ ${formatear(item.cuota)}*\n  Total final: RD$ ${formatear(item.totalConInicial)}`;
+        const pagos = item.cuotas === 1 ? 'pago' : 'pagos';
+        return `• *${formatearMeses(item.meses)}:* ${item.cuotas} ${pagos} de *RD$ ${formatear(item.cuota)}*\n  Total final: RD$ ${formatear(item.totalConInicial)}`;
     }).join('\n\n');
 
     const notaBloqueo = datos.bloqueoCosto > 0
         ? '\n🔒 El sistema de bloqueo está incluido y no genera intereses.\n'
         : '';
+    const lineaMarca = datos.tipoEquipo === 'ANDROID'
+        ? `🏷️ *Marca:* ${nombresMarcaDispositivo[datos.marcaDispositivo]}\n`
+        : '';
 
     const mensaje = `👋 ¡Hola! Te compartimos tu cotización de *NPTECH*:
 
 🛍️ *Producto:* ${nombresTipoProducto[datos.tipoEquipo]}
-💰 *Precio:* RD$ ${formatear(datos.monto)}
+${lineaMarca}💰 *Precio:* RD$ ${formatear(datos.monto)}
 💵 *Inicial:* RD$ ${formatear(datos.inicial)}
 📅 *Forma de pago:* Pagos ${datos.configPeriodo.plural}
 
@@ -1057,7 +1262,8 @@ document.getElementById('copiarMensaje').addEventListener('click', copiarMensaje
 // Vincular eventos a todos los campos relevantes
 const inputsIds = [
     'monto', 'inicialPorcentaje', 'inicialManualMonto', 'tipoEquipo', 
-    'riesgo', 'periodicidad', 'cuotasSeleccionadas', 'bloqueoCosto', 'interesManual'
+    'riesgo', 'marcaDispositivo', 'periodicidad', 'cuotasSeleccionadas',
+    'bloqueoCosto', 'interesManual'
 ];
 inputsIds.forEach(id => {
     const element = document.getElementById(id);
@@ -1079,7 +1285,7 @@ function actualizarOpcionesPlazo() {
     planesFinanciamiento.forEach(plan => {
         const opcion = selector.querySelector(`option[value="${plan.meses}"]`);
         const cuotas = obtenerCantidadCuotas(plan, periodicidad);
-        opcion.textContent = `${plan.meses} meses — ${cuotas} cuotas ${config.plural}`;
+        opcion.textContent = `${formatearMeses(plan.meses)} — ${formatearCantidadCuotas(cuotas, config)}`;
         opcion.hidden = plan.meses > mesesMaximos;
         opcion.disabled = plan.meses > mesesMaximos;
     });
@@ -1089,9 +1295,20 @@ function actualizarOpcionesPlazo() {
     selector.value = plazoActualPermitido ? valorActual : String(mesesMaximos);
 }
 
+function actualizarMarcaDispositivo() {
+    const tipoProducto = document.getElementById('tipoEquipo').value;
+    const campo = document.getElementById('campoMarcaDispositivo');
+    const selector = document.getElementById('marcaDispositivo');
+    const aplicaAAndroid = tipoProducto === 'ANDROID';
+
+    campo.hidden = !aplicaAAndroid;
+    selector.disabled = !aplicaAAndroid;
+}
+
 document.getElementById('periodicidad').addEventListener('change', actualizarOpcionesPlazo);
 document.getElementById('tipoEquipo').addEventListener('change', () => {
     actualizarOpcionesPlazo();
+    actualizarMarcaDispositivo();
     calcular();
 });
 
@@ -1100,6 +1317,7 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('interesManual').value = '';
     document.getElementById('inicialManualMonto').value = '';
     actualizarOpcionesPlazo();
+    actualizarMarcaDispositivo();
     calcular();
 });
 
