@@ -850,27 +850,10 @@ const ajustesMarcaDispositivo = {
     'OTRO': 1.5
 };
 
-const nombresMarcaDispositivo = {
-    'REDMI': 'Redmi',
-    'MOTOROLA': 'Motorola',
-    'SAMSUNG': 'Samsung',
-    'ITEL': 'Itel',
-    'INFINIX': 'Infinix',
-    'TECNO': 'Tecno',
-    'OUKITEL': 'Oukitel',
-    'OTRO': 'Otra marca'
-};
-
 const ajustesTipoProducto = {
     'ANDROID': 1,
     'IPHONE': -1,
     'ELECTRODOMESTICO': -2
-};
-
-const nombresTipoProducto = {
-    'ANDROID': 'Teléfono Android',
-    'IPHONE': 'iPhone',
-    'ELECTRODOMESTICO': 'Electrodoméstico'
 };
 
 const mesesMaximosPorProducto = {
@@ -1190,22 +1173,19 @@ function renderizarTablaPlanes(datos) {
 
 // Mensaje breve para WhatsApp: muestra solo lo necesario para tomar una decisión.
 function generarMensajeCliente(datos) {
-    const lineasCuotas = datos.resultados.map(item => {
-        const pagos = item.cuotas === 1 ? 'pago' : 'pagos';
-        return `• *${formatearMeses(item.meses)}:* ${item.cuotas} ${pagos} de *RD$ ${formatear(item.cuota)}*\n  Total final: RD$ ${formatear(item.totalConInicial)}`;
-    }).join('\n\n');
+    const lineasCuotas = datos.resultados
+        .filter(item => item.meses !== 1)
+        .map(item => {
+            const pagos = item.cuotas === 1 ? 'pago' : 'pagos';
+            return `• *${formatearMeses(item.meses)}:* ${item.cuotas} ${pagos} de *RD$ ${formatear(item.cuota)}*\n  Total final: RD$ ${formatear(item.totalConInicial)}`;
+        }).join('\n\n');
 
     const notaBloqueo = datos.bloqueoCosto > 0
         ? '\n🔒 El sistema de bloqueo está incluido y no genera intereses.\n'
         : '';
-    const lineaMarca = datos.tipoEquipo === 'ANDROID'
-        ? `🏷️ *Marca:* ${nombresMarcaDispositivo[datos.marcaDispositivo]}\n`
-        : '';
-
     const mensaje = `👋 ¡Hola! Te compartimos tu cotización de *NPTECH*:
 
-🛍️ *Producto:* ${nombresTipoProducto[datos.tipoEquipo]}
-${lineaMarca}💰 *Precio:* RD$ ${formatear(datos.monto)}
+💰 *Precio:* RD$ ${formatear(datos.monto)}
 💵 *Inicial:* RD$ ${formatear(datos.inicial)}
 📅 *Forma de pago:* Pagos ${datos.configPeriodo.plural}
 
@@ -1216,12 +1196,22 @@ ${notaBloqueo}
 ✅ La inicial ya está incluida en cada total.
 ⚠️ Cotización sujeta a aprobación.`;
 
-    document.getElementById('mensajeCliente').textContent = mensaje;
+    const contenedorMensaje = document.getElementById('mensajeCliente');
+    contenedorMensaje.textContent = mensaje;
+    // Conserva el texto original para copiarlo sin que el navegador colapse los saltos.
+    contenedorMensaje.dataset.textoWhatsApp = mensaje;
 }
 
 // Copia también cuando la página se abre directamente como archivo local.
 async function copiarMensaje() {
-    const texto = document.getElementById('mensajeCliente').innerText;
+    const contenedorMensaje = document.getElementById('mensajeCliente');
+    const textoOriginalMensaje = contenedorMensaje.dataset.textoWhatsApp
+        || contenedorMensaje.textContent;
+    // CRLF conserva correctamente los saltos al pegar en WhatsApp para Windows.
+    const texto = textoOriginalMensaje
+        .replace(/\r\n?/g, '\n')
+        .replace(/\n/g, '\r\n')
+        .trim();
     if(!texto.trim()) return;
 
     const btn = document.getElementById('copiarMensaje');
