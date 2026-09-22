@@ -702,7 +702,7 @@ select:focus{
                 </div>
             </div>
 
-            <div class="field-note">Hay plazos desde 1 mes. Los teléfonos se financian hasta 4 meses y los electrodomésticos hasta 6 meses. La cantidad de cuotas cambia según la frecuencia de pago.</div>
+            <div class="field-note">Monto máximo financiado: RD$ 20,000. Hay plazos desde 1 mes; los teléfonos se financian hasta 4 meses y los electrodomésticos hasta 6 meses.</div>
         </section>
 
         <details class="advanced">
@@ -823,6 +823,8 @@ select:focus{
 <script>
 
 // ======================== CONFIGURACIÓN BASE ==========================
+const LIMITE_FINANCIAMIENTO = 20000;
+
 // Tasas base por cuotas (solo se usan cuando el interés NO es manual)
 const tasasBase = {
     2: 10,
@@ -1018,6 +1020,22 @@ function calcular() {
         inicial = monto;
         avisos.push('La inicial fue limitada al valor del equipo.');
     }
+
+    const inicialMinimaPorLimite = Math.min(
+        monto,
+        Math.max(0, monto + bloqueoCosto - LIMITE_FINANCIAMIENTO)
+    );
+    const inicialAjustadaPorLimite = inicial < inicialMinimaPorLimite;
+
+    if(inicialAjustadaPorLimite) {
+        inicial = inicialMinimaPorLimite;
+        avisos.push(
+            `La inicial fue ajustada a RD$ ${formatear(inicial)} para no financiar más de RD$ ${formatear(LIMITE_FINANCIAMIENTO)}.`
+        );
+    }
+    if(bloqueoCosto > LIMITE_FINANCIAMIENTO) {
+        avisos.push('El costo de bloqueo por sí solo supera el máximo financiable.');
+    }
     inicial = redondearMoneda(inicial);
 
     let modoManualInteres = interesManualInput !== '';
@@ -1087,6 +1105,7 @@ function calcular() {
         inicial,
         inicialPorcentaje,
         modoInicialManual,
+        inicialAjustadaPorLimite,
         riesgo,
         tipoEquipo,
         marcaDispositivo,
@@ -1123,10 +1142,15 @@ function actualizarResultados(datos) {
         `RD$ ${formatear(principal.ganancia)}`;
 
     const inicialOrigen = document.getElementById('inicialOrigen');
-    inicialOrigen.textContent = datos.modoInicialManual
-        ? '(modo: manual RD$)'
-        : `(modo: ${datos.inicialPorcentaje}% del monto)`;
-    inicialOrigen.style.color = datos.modoInicialManual ? '#b02a37' : '#2c6e2c';
+    if(datos.inicialAjustadaPorLimite) {
+        inicialOrigen.textContent = `(ajustada al máximo financiable de RD$ ${formatear(LIMITE_FINANCIAMIENTO)})`;
+        inicialOrigen.style.color = '#9a6700';
+    } else {
+        inicialOrigen.textContent = datos.modoInicialManual
+            ? '(modo: manual RD$)'
+            : `(modo: ${datos.inicialPorcentaje}% del monto)`;
+        inicialOrigen.style.color = datos.modoInicialManual ? '#b02a37' : '#2c6e2c';
+    }
 
     const interesOrigen = document.getElementById('interesOrigen');
     interesOrigen.textContent = datos.modoManualInteres
